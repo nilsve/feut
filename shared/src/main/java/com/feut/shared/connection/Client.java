@@ -6,6 +6,7 @@ import org.json.simple.parser.ParseException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +16,13 @@ public class Client implements Runnable {
     Socket socket;
     List<Packet> packetHistory = new ArrayList<>();
 
-    public Client(Socket socket) {
+    IReceivePacket onReceivePacket;
+    IOnDisconnect onDisconnect;
+
+    public Client(Socket socket, IReceivePacket onReceivePacket, IOnDisconnect onDisconnect) {
         this.socket = socket;
+        this.onReceivePacket = onReceivePacket;
+        this.onDisconnect = onDisconnect;
     }
 
     public String getClientInfo() {
@@ -30,17 +36,32 @@ public class Client implements Runnable {
             try {
                 Packet packet = Packet.readPacket(reader);
                 if (Helper.isDebugMode()) {
-                    System.out.println("New packet received from " + getClientInfo());
-                    System.out.println("Serialized: " + packet.Serialize());
+                    Helper.Log("New packet received from " + getClientInfo());
                     packetHistory.add(packet);
                 }
+
+                onReceivePacket.onReceivePacket(this, packet);
+
             } catch(ParseException ex) {
-                System.out.println("Corrupted packet received!");
+                Helper.Log("Corrupted packet received!");
                 Disconnect();
             } catch (ClassNotFoundException ex) {
-                System.out.println("Unknown packet received!");
+                Helper.Log("Unknown packet received!");
                 Disconnect(); // Misschien niet helemaal nodig, maar het zou niet voor moeten komen.
             }
+        }
+    }
+
+    public void sendPacket(Packet packet) {
+        String json = packet.Serialize();
+        byte[] buffer = json.getBytes();
+        try {
+            OutputStream stream = socket.getOutputStream();
+            stream.write(buffer);
+            stream.write(0);
+        } catch (Exception err) {
+            Helper.Log("Could not send packet to " + getClientInfo());
+            Disconnect();
         }
     }
 
@@ -50,6 +71,9 @@ public class Client implements Runnable {
         try {
             socket.close();
         } catch (IOException er) {}
+        finally {
+            onDisconnect.onDisconnect(this);
+        }
     }
 
     @Override

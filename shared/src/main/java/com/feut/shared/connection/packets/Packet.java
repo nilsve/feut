@@ -18,6 +18,7 @@ public class Packet {
     public static Packet readPacket(BufferedReader reader) throws IOException, ParseException, ClassNotFoundException {
         StringBuilder builder = new StringBuilder(128); // TODO: Standaard pakket grootte berekenen uit gemiddelde van vorige ofzo?
 
+        // Lezen tot null character
         int r;
         while ((r = reader.read()) != -1) {
             char chr = (char)r;
@@ -38,9 +39,7 @@ public class Packet {
     }
 
     public String Serialize() {
-        String[] splitted = this.getClass().getName().split("\\.");
-        packetType = splitted[splitted.length - 1];
-
+        packetType = this.getClass().getSimpleName();
         return gson.toJson(this);
     }
 }
