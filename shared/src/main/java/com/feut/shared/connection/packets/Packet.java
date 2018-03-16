@@ -16,7 +16,7 @@ public class Packet {
     String packetType;
 
     public static Packet readPacket(BufferedReader reader) throws IOException, ParseException, ClassNotFoundException {
-        StringBuilder builder = new StringBuilder(128); // TODO: Betere standaard pakket grootte?
+        StringBuilder builder = new StringBuilder(128); // TODO: Standaard pakket grootte berekenen uit gemiddelde van vorige ofzo?
 
         int r;
         while ((r = reader.read()) != -1) {

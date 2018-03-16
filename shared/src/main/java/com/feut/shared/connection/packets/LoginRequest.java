@@ -8,10 +8,4 @@ import java.util.List;
 public class LoginRequest extends Packet {
     String username;
     String password;
-
-    List<Adres> adressen = new ArrayList<Adres>();
-
-    public LoginRequest() {
-        adressen.add(new Adres("Veghel city"));
-    }
 }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Client implements Runnable {
+    boolean shouldClose = false;
     Socket socket;
     List<Packet> packetHistory = new ArrayList<>();
 
@@ -25,7 +26,7 @@ public class Client implements Runnable {
     private void Listen() throws IOException, InterruptedException {
         Helper.Log("Client " + getClientInfo() + " started listening");
         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        while(true) {
+        while(!socket.isClosed() && !shouldClose) {
             try {
                 Packet packet = Packet.readPacket(reader);
                 if (Helper.isDebugMode()) {
@@ -35,10 +36,20 @@ public class Client implements Runnable {
                 }
             } catch(ParseException ex) {
                 System.out.println("Corrupted packet received!");
+                Disconnect();
             } catch (ClassNotFoundException ex) {
                 System.out.println("Unknown packet received!");
+                Disconnect(); // Misschien niet helemaal nodig, maar het zou niet voor moeten komen.
             }
         }
+    }
+
+    void Disconnect() {
+        shouldClose = true;
+
+        try {
+            socket.close();
+        } catch (IOException er) {}
     }
 
     @Override

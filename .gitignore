@@ -1,1 +1,4 @@
 *.class
+/Server/.idea/
+/shared/.idea/
+/shared/out/
