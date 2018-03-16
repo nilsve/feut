@@ -16,17 +16,25 @@ public class Client implements Runnable {
     Socket socket;
     List<Packet> packetHistory = new ArrayList<>();
 
-    IReceivePacket onReceivePacket;
+    List<IReceivePacket> packetHandlers = new ArrayList<>();
     IOnDisconnect onDisconnect;
 
     public Client(Socket socket, IReceivePacket onReceivePacket, IOnDisconnect onDisconnect) {
         this.socket = socket;
-        this.onReceivePacket = onReceivePacket;
+        this.packetHandlers.add(onReceivePacket);
         this.onDisconnect = onDisconnect;
     }
 
     public String getClientInfo() {
         return socket.getInetAddress().toString();
+    }
+
+    public void regiserPacketHandler(IReceivePacket onReceivePacket) {
+        packetHandlers.add(onReceivePacket);
+    }
+
+    public void unregisterPacketHandler(IReceivePacket onReceivePacket) {
+        packetHandlers.remove(onReceivePacket);
     }
 
     private void Listen() throws IOException, InterruptedException {
@@ -40,7 +48,9 @@ public class Client implements Runnable {
                     packetHistory.add(packet);
                 }
 
-                onReceivePacket.onReceivePacket(this, packet);
+                for (IReceivePacket packetHandler : packetHandlers) {
+                    packetHandler.onReceivePacket(this, packet);
+                }
 
             } catch(ParseException ex) {
                 Helper.Log("Corrupted packet received!");
