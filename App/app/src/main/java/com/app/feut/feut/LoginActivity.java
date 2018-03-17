@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.app.feut.feut.connection.Connection;
+import com.app.feut.feut.connection.SendPacketTask;
 import com.feut.shared.connection.packets.LoginRequest;
 
 /**
@@ -21,9 +22,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Connection.Initialize();
+        new Thread(Connection.getInstance()).start(); // TODO: Niet de beste plek hiervoor
 
-        System.out.println("Create activity login");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -35,9 +35,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 LoginRequest request = new LoginRequest();
-                request.username = usernameText.toString();
+                request.username = usernameText.getText().toString();
                 request.password = passwordText.getText().toString();
-                Connection.client.sendPacket(request);
+
+                new SendPacketTask().execute(request);
             }
         });
         }

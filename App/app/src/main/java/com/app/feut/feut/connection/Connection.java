@@ -10,23 +10,34 @@ import java.net.Socket;
  * Created by nils.van.eijk on 16-03-18.
  */
 
-public class Connection {
+public class Connection implements Runnable {
 
-    public static Client client;
-    static PacketHandler packetHandler;
+    static Connection instance;
 
-    public static void Initialize() {
+    public Client client;
+    PacketHandler packetHandler;
+
+    public static Connection getInstance() {
+        if (instance == null) {
+            instance = new Connection();
+        }
+
+        return instance;
+    }
+
+    private void Initialize() {
         packetHandler = new PacketHandler();
 
         Connect();
     }
 
-    static void Connect() {
+    private void Connect() {
         while (true) {
             try {
-                Socket socket = new Socket("172.16.10.21", 12345);
+                Socket socket = new Socket("192.168.0.108", 12345);
 
                 client = new Client(socket, packetHandler, (Client _client) -> handleDisconnect());
+                new Thread(client).start();
                 break;
             } catch (Exception err) {
                 try {
@@ -40,7 +51,11 @@ public class Connection {
     }
 
     static void handleDisconnect() {
-
+        getInstance().Connect();
     }
 
+    @Override
+    public void run() {
+        Initialize();
+    }
 }

@@ -11,6 +11,6 @@ import com.feut.shared.connection.packets.Packet;
 public class PacketHandler implements IReceivePacket {
     @Override
     public void onReceivePacket(Client client, Packet packet) {
-
+        System.out.println("Pakketje! :D " + packet.Serialize());
     }
 }
