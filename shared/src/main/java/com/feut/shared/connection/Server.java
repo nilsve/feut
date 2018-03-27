@@ -25,7 +25,7 @@ public class Server {
             new Thread(client).start();
             Helper.Log("New client connected: " + client.getClientInfo());
             clientList.add(client);
-}
+        }
     }
 
     void onDisconnect(Client client) {

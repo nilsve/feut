@@ -18,12 +18,10 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../shared/classes/artifacts/shared_jar/shared.jar!/" />
+          <root url="jar://$MODULE_DIR$/../shared/out/artifacts/feut_jar/feut.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/../shared/classes/artifacts/shared_jar/shared.jar!/" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
   </component>
