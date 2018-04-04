@@ -12,7 +12,7 @@ public class Packet {
 
     static JSONParser parser = new JSONParser();
     static Gson gson = new Gson();
-
+    static String json;
     String packetType;
 
     public static Packet readPacket(BufferedReader reader) throws IOException, ParseException, ClassNotFoundException {
@@ -29,7 +29,7 @@ public class Packet {
             }
         }
 
-        String json = builder.toString();
+        json = builder.toString();
 
         JSONObject obj = (JSONObject)parser.parse(json);
         String packetType = (String)obj.get("packetType");
@@ -41,5 +41,13 @@ public class Packet {
     public String Serialize() {
         packetType = this.getClass().getSimpleName();
         return gson.toJson(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Packet{" +
+                "json='" + json + '\'' +
+                ", packetType='" + packetType + '\'' +
+                '}';
     }
 }

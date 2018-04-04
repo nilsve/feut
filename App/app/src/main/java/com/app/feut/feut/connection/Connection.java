@@ -1,8 +1,6 @@
 package com.app.feut.feut.connection;
 
 import com.feut.shared.connection.Client;
-import com.feut.shared.connection.IOnDisconnect;
-import com.feut.shared.connection.packets.Packet;
 
 import java.net.Socket;
 
@@ -34,7 +32,7 @@ public class Connection implements Runnable {
     private void Connect() {
         while (true) {
             try {
-                Socket socket = new Socket("192.168.0.108", 12345);
+                Socket socket = new Socket("127.0.0.1", 12345);
 
                 client = new Client(socket, packetHandler, (Client _client) -> handleDisconnect());
                 new Thread(client).start();

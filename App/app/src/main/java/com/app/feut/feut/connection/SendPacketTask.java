@@ -14,8 +14,10 @@ public class SendPacketTask extends AsyncTask<Packet, Void, Void> {
         Connection connection = Connection.getInstance();
 
         for (Packet packet : packets) {
+            System.out.println(packet.toString());
             connection.client.sendPacket(packet);
         }
+
         return null;
     }
 }
