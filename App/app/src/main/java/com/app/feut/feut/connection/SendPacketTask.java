@@ -13,6 +13,11 @@ public class SendPacketTask extends AsyncTask<Packet, Void, Void> {
     protected Void doInBackground(Packet... packets) {
         Connection connection = Connection.getInstance();
 
+        if (connection.client == null) {
+            System.out.println("Niet verbonden!");
+            return null;
+        }
+
         for (Packet packet : packets) {
             connection.client.sendPacket(packet);
         }
