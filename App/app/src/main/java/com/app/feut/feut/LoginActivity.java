@@ -23,7 +23,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         loginValid = false;
-
         new Thread(Connection.getInstance()).start(); // TODO: Niet de beste plek hiervoor
 
         super.onCreate(savedInstanceState);

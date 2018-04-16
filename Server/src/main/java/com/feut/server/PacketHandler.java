@@ -14,9 +14,29 @@ public class PacketHandler implements IReceivePacket {
     public void onReceivePacket(Client client, Packet packet) {
         switch (packet.getClass().getSimpleName()) {
             case "LoginRequest":
-                LoginResponse response = new LoginResponse();
-                response.success = true;
-                client.sendPacket(response);
+                // Uitsluiten of wachtwoord klopt en hoort bij bestaande gebruikersnaam.
+
+                LoginResponse loginResponse = new LoginResponse();
+                loginResponse.success = true;
+                client.sendPacket(loginResponse);
+                break;
+            case "RegisterRequest":
+                // Kijken of account al bestaat in database, anders aanmaken.
+
+                RegisterResponse registerResponse = new RegisterResponse();
+                registerResponse.succes = true;
+                client.sendPacket(registerResponse);
+                break;
+            case "RegisterAddressRequest":
+                boolean registerAddressFailed = false;
+                // Kijken of adres al bestaat in database, anders aanmaken.
+
+                RegisterAddressResponse registerAddressResponse = new RegisterAddressResponse();
+                if (registerAddressFailed) {
+                    // registerAddressResponse.succes = false;
+                    // registerAddressResponse.message = "Adres bestaat al";
+                } else { registerAddressResponse.succes = true; }
+                client.sendPacket(registerAddressResponse);
                 break;
         }
     }
