@@ -1,0 +1,7 @@
+package com.feut.shared.connection.packets;
+
+public class RegisterRequest extends Packet {
+    public String email;
+    public String username;
+    public String password;
+}
