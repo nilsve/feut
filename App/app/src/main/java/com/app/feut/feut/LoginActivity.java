@@ -24,8 +24,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         loginValid = false;
 
-        new Thread(Connection.getInstance()).start(); // TODO: Niet de beste plek hiervoor
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 

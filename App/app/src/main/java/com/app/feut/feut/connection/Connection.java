@@ -34,7 +34,7 @@ public class Connection implements Runnable {
     private void Connect() {
         while (true) {
             try {
-                Socket socket = new Socket("192.168.0.108", 12345);
+                Socket socket = new Socket("145.93.164.7", 12345);
 
                 client = new Client(socket, packetHandler, (Client _client) -> handleDisconnect());
                 new Thread(client).start();
