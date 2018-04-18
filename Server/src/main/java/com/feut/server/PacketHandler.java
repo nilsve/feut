@@ -24,18 +24,14 @@ public class PacketHandler implements IReceivePacket {
                 // Kijken of account al bestaat in database, anders aanmaken.
 
                 RegisterResponse registerResponse = new RegisterResponse();
-                registerResponse.succes = true;
+                registerResponse.succes = false;
                 client.sendPacket(registerResponse);
                 break;
             case "RegisterAddressRequest":
-                boolean registerAddressFailed = false;
                 // Kijken of adres al bestaat in database, anders aanmaken.
 
                 RegisterAddressResponse registerAddressResponse = new RegisterAddressResponse();
-                if (registerAddressFailed) {
-                    // registerAddressResponse.succes = false;
-                    // registerAddressResponse.message = "Adres bestaat al";
-                } else { registerAddressResponse.succes = true; }
+                registerAddressResponse.succes = false;
                 client.sendPacket(registerAddressResponse);
                 break;
         }

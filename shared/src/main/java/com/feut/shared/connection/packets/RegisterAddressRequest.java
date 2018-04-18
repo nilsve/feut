@@ -1,6 +1,6 @@
 package com.feut.shared.connection.packets;
 
-public class RegisterAddresRequest extends Packet {
+public class RegisterAddressRequest extends Packet {
     public String street;
     public String streetNumber;
     public String addition;

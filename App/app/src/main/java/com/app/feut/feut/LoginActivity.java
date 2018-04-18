@@ -16,7 +16,7 @@ import com.feut.shared.connection.packets.LoginRequest;
  */
 
 public class LoginActivity extends AppCompatActivity {
-    private TextView usernameText;
+    private TextView emailText;
     private TextView passwordText;
     public static boolean loginValid;
 
@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        usernameText = (TextView) findViewById(R.id.usernameText);
+        emailText = (TextView) findViewById(R.id.emailText);
         passwordText = (TextView) findViewById(R.id.passwordText);
 
         Button loginButton = (Button) findViewById(R.id.loginButton);
@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public synchronized void onClick(View view) {
                 LoginRequest request = new LoginRequest();
-                request.username = usernameText.getText().toString();
+                request.username = emailText.getText().toString();
                 request.password = passwordText.getText().toString();
 
                 new SendPacketTask().execute(request);
@@ -46,7 +46,8 @@ public class LoginActivity extends AppCompatActivity {
                     e.printStackTrace();
                 } finally {
                     if (loginValid) {
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(mainActivityIntent);
                     }
                 }
 
@@ -58,7 +59,16 @@ public class LoginActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String tempEmail = "";
+                String tempPassword = "";
+
+                if (emailText.getText().toString().length() > 0 || passwordText.getText().toString().length() > 0) {
+                    tempEmail = emailText.getText().toString();
+                    tempPassword = passwordText.getText().toString();
+                }
+
                 Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
+                registerIntent.putExtra("email", tempEmail).putExtra("password", tempPassword);
                 startActivity(registerIntent);
             }
         });
