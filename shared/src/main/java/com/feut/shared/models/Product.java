@@ -1,15 +1,15 @@
 package com.feut.shared.models;
 
-public class Product {
-    String product_naam = "aadrappdpdle";
-    VoorraadMutatie[] mutaties;
+import java.util.Date;
 
-    int getVoorraad() {
-        int totaleVoorraad = 0;
-        for (VoorraadMutatie mutatie: mutaties) {
-            totaleVoorraad += mutatie.aantalVeranderd;
-        }
-
-        return totaleVoorraad;
-    }
+public class Product extends Model {
+    int productId;
+    int huisId;
+    String beschrijving;
+    int aantal;
+    int gekocht;
+    Date datumAanvraag;
+    Date datumGekocht;
+    int gekochtDoorId;
+    int aangevraagdDoorId;
 }
