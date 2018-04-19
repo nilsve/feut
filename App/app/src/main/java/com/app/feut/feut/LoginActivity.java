@@ -9,7 +9,11 @@ import android.widget.TextView;
 
 import com.app.feut.feut.connection.Connection;
 import com.app.feut.feut.connection.SendPacketTask;
+import com.feut.shared.connection.Client;
+import com.feut.shared.connection.IReceivePacket;
 import com.feut.shared.connection.packets.LoginRequest;
+import com.feut.shared.connection.packets.LoginResponse;
+import com.feut.shared.connection.packets.Packet;
 
 /**
  * Created by nils.van.eijk on 16-03-18.
@@ -18,11 +22,9 @@ import com.feut.shared.connection.packets.LoginRequest;
 public class LoginActivity extends AppCompatActivity {
     private TextView usernameText;
     private TextView passwordText;
-    public static boolean loginValid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        loginValid = false;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -31,38 +33,42 @@ public class LoginActivity extends AppCompatActivity {
         passwordText = (TextView) findViewById(R.id.passwordText);
 
         Button loginButton = (Button) findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public synchronized void onClick(View view) {
-                LoginRequest request = new LoginRequest();
-                request.username = usernameText.getText().toString();
-                request.password = passwordText.getText().toString();
-
-                new SendPacketTask().execute(request);
-                try {
-                    this.wait(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (loginValid) {
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                    }
-                }
-
-
-            }
-        });
+        loginButton.setOnClickListener(handleLoginClick);
 
         Button registerButton = (Button) findViewById(R.id.registerButton);
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
-                startActivity(registerIntent);
+        registerButton.setOnClickListener(handleRegisterClick);
+
+        // Register packet callback
+        Connection.getInstance().registerPacketCallback(LoginResponse.class, handleLoginResponse);
+    }
+
+    IReceivePacket handleLoginResponse = new IReceivePacket() {
+        @Override
+        public void onReceivePacket(Client client, Packet packet) {
+            LoginResponse response = (LoginResponse)packet;
+
+            if (response.success) {
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
             }
-        });
         }
+    };
 
-    public static void setLoginValid() { loginValid = true; }
+    View.OnClickListener handleRegisterClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
+            startActivity(registerIntent);
+        }
+    };
 
+    View.OnClickListener handleLoginClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            LoginRequest request = new LoginRequest();
+            request.username = usernameText.getText().toString();
+            request.password = passwordText.getText().toString();
+
+            new SendPacketTask().execute(request);
+        }
+    };
 }
