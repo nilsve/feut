@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.feut.feut.connection.Connection;
 import com.app.feut.feut.connection.SendPacketTask;
 import com.feut.shared.connection.packets.RegisterAddressRequest;
 
@@ -22,8 +21,6 @@ public class NewAddressActivity extends AppCompatActivity {
     @Override
     protected synchronized void onCreate(Bundle savedInstanceState) {
         addressRegisterValid = false;
-        new Thread(Connection.getInstance()).start(); // TODO: Niet de beste plek hiervoor
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_address);
 

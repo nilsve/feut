@@ -62,10 +62,8 @@ public class LoginActivity extends AppCompatActivity {
                 String tempEmail = "";
                 String tempPassword = "";
 
-                if (emailText.getText().toString().length() > 0 || passwordText.getText().toString().length() > 0) {
-                    tempEmail = emailText.getText().toString();
-                    tempPassword = passwordText.getText().toString();
-                }
+                tempEmail = emailText.getText().toString();
+                tempPassword = passwordText.getText().toString();
 
                 Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
                 registerIntent.putExtra("email", tempEmail).putExtra("password", tempPassword);

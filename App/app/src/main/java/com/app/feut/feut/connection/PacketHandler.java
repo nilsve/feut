@@ -24,21 +24,21 @@ public class PacketHandler implements IReceivePacket {
 
                 LoginResponse loginResponse = (LoginResponse) packet;
                 System.out.println(loginResponse.success);
-                if (loginResponse.success = true) { LoginActivity.setLoginValid(); }
+                if (loginResponse.success) { LoginActivity.setLoginValid(); }
 
                 break;
             case "RegisterResponse":
 
                 RegisterResponse registerResponse = (RegisterResponse) packet;
                 System.out.println(registerResponse.succes);
-                if (registerResponse.succes = true) {  RegisterActivity.setRegisterValid(); };
+                if (registerResponse.succes) {  RegisterActivity.setRegisterValid(); };
 
                 break;
             case "RegisterAddressResponse":
 
                 RegisterAddressResponse registerAddressResponse = (RegisterAddressResponse) packet;
                 System.out.println("In PacketHandler: " + registerAddressResponse.succes);
-                if (registerAddressResponse.succes = true) {  NewAddressActivity.setAddressRegisterValid(); };
+                if (registerAddressResponse.succes) {  NewAddressActivity.setAddressRegisterValid(); };
 
                 break;
         }

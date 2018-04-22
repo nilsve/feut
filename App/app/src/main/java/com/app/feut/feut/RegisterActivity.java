@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.feut.feut.connection.Connection;
 import com.app.feut.feut.connection.SendPacketTask;
 import com.feut.shared.connection.packets.RegisterRequest;
 
@@ -26,15 +25,13 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         registerValid = false;
-        new Thread(Connection.getInstance()).start(); // TODO: Niet de beste plek hiervoor
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
 
 
         TextView emailText = (TextView) findViewById(R.id.emailText);
-        TextView usernameText = (TextView) findViewById(R.id.emailText);
+        TextView usernameText = (TextView) findViewById(R.id.usernameText);
         TextView passwordText = (TextView) findViewById(R.id.passwordText);
 
 
