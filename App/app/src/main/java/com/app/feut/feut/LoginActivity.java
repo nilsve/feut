@@ -20,16 +20,15 @@ import com.feut.shared.connection.packets.Packet;
  */
 
 public class LoginActivity extends AppCompatActivity {
-    private TextView usernameText;
+    private TextView emailText;
     private TextView passwordText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        usernameText = (TextView) findViewById(R.id.usernameText);
+        emailText = (TextView) findViewById(R.id.emailText);
         passwordText = (TextView) findViewById(R.id.passwordText);
 
         Button loginButton = (Button) findViewById(R.id.loginButton);
@@ -39,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         registerButton.setOnClickListener(handleRegisterClick);
 
         // Register packet callback
-        Connection.getInstance().registerPacketCallback(LoginResponse.class, handleLoginResponse);
+        Connection.getInstance().registerPacketCallback(LoginResponse.class, handleLoginResponse, this);
     }
 
     IReceivePacket handleLoginResponse = new IReceivePacket() {
@@ -56,7 +55,14 @@ public class LoginActivity extends AppCompatActivity {
     View.OnClickListener handleRegisterClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            String tempEmail = "";
+            String tempPassword = "";
+
+            tempEmail = emailText.getText().toString();
+            tempPassword = passwordText.getText().toString();
+
             Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
+            registerIntent.putExtra("email", tempEmail).putExtra("password", tempPassword);
             startActivity(registerIntent);
         }
     };
@@ -65,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             LoginRequest request = new LoginRequest();
-            request.username = usernameText.getText().toString();
+            request.username = emailText.getText().toString();
             request.password = passwordText.getText().toString();
 
             new SendPacketTask().execute(request);

@@ -15,59 +15,52 @@ import com.app.feut.feut.connection.Connection;
 import com.app.feut.feut.connection.SendPacketTask;
 import com.feut.shared.connection.Client;
 import com.feut.shared.connection.IReceivePacket;
-import com.feut.shared.connection.packets.LoginResponse;
 import com.feut.shared.connection.packets.Packet;
-import com.feut.shared.connection.packets.RegisterRequest;
+import com.feut.shared.connection.packets.RegisterAddressRequest;
+import com.feut.shared.connection.packets.RegisterAddressResponse;
 import com.feut.shared.connection.packets.RegisterResponse;
 
-public class RegisterActivity extends AppCompatActivity {
-
-    private TextView emailText;
-    private TextView usernameText;
-    private TextView passwordText;
+public class NewAddressActivity extends AppCompatActivity {
     private Context context = this;
 
+    TextView streetText;
+    TextView streetNumberText;
+    TextView additionText;
+    TextView zipCodeText;
+    TextView cityText;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected synchronized void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_new_address);
 
-        emailText = (TextView) findViewById(R.id.emailText);
-        usernameText = (TextView) findViewById(R.id.usernameText);
-        passwordText = (TextView) findViewById(R.id.passwordText);
+        streetText = findViewById(R.id.streetText);
+        streetNumberText = findViewById(R.id.streetNumberText);
+        additionText = findViewById(R.id.additionText);
+        zipCodeText = findViewById(R.id.zipCodeText);
+        cityText = findViewById(R.id.cityText);
 
+        Button registerAddressButton = (Button) findViewById(R.id.registerAddressButton);
+        registerAddressButton.setOnClickListener(handleRegisterAddressClick);
 
-        // Get parameters from previous activity
-        try {
-            Bundle b = getIntent().getExtras();
-            if (b != null) {
-                emailText.setText(b.getString("email"));
-                passwordText.setText(b.getString("password"));
-            }
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
-
-        Button registerButton = (Button) findViewById(R.id.registerButton);
-        registerButton.setOnClickListener(handleRegisterClick);
-
-        Connection.getInstance().registerPacketCallback(RegisterResponse.class, handleRegisterResponse, this);
+        Connection.getInstance().registerPacketCallback(RegisterAddressResponse.class, handleRegisterResponse, this);
     }
 
     IReceivePacket handleRegisterResponse = new IReceivePacket() {
         @Override
         public void onReceivePacket(Client client, Packet packet) {
-            RegisterResponse response = (RegisterResponse)packet;
+            RegisterAddressResponse response = (RegisterAddressResponse)packet;
+
             if (response.success) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Account is aangemaakt, wil je nu een adres aanmaken?")
-                        .setTitle("Account aangemaakt")
+                builder.setMessage("Je bent nu de beheerder van dit adres. Wil je direct iemand uitnodigen?")
+                        .setTitle("Adres aangemaakt")
                         .setCancelable(false)
                         .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent newAddresIntent = new Intent(context, NewAddressActivity.class);
-                                startActivity(newAddresIntent);
+                                // Intent InviteActivity = new Intent(getApplicationContext(), InviteActivity.class);
+                                // startActivity(InviteActivity);
 
                             }
                         })
@@ -80,20 +73,21 @@ public class RegisterActivity extends AppCompatActivity {
                         });
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
-
             } else {
-                Toast.makeText(context, "Dit account kan niet worden aangemaakt", Toast.LENGTH_SHORT);
+                Toast.makeText(context, "Dit adres kan niet worden aangemaakt", Toast.LENGTH_SHORT);
             }
         }
     };
 
-    View.OnClickListener handleRegisterClick = new View.OnClickListener() {
+    View.OnClickListener handleRegisterAddressClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            RegisterRequest request = new RegisterRequest();
-            request.email = emailText.getText().toString();
-            request.username = usernameText.getText().toString();
-            request.password = passwordText.getText().toString();
+            RegisterAddressRequest request = new RegisterAddressRequest();
+            request.street = streetText.getText().toString();
+            request.streetNumber = streetNumberText.getText().toString();
+            request.addition = additionText.getText().toString();
+            request.zipCode = zipCodeText.getText().toString();
+            request.city = cityText.getText().toString();
 
             new SendPacketTask().execute(request);
         }

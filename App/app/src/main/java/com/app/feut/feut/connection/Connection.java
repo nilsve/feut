@@ -1,5 +1,8 @@
 package com.app.feut.feut.connection;
 
+import android.app.Activity;
+import android.util.Pair;
+
 import com.feut.shared.connection.Client;
 import com.feut.shared.connection.IReceivePacket;
 import com.feut.shared.connection.packets.Packet;
@@ -20,7 +23,7 @@ public class Connection implements Runnable {
 
     public Client client;
 
-    Map<String, List<IReceivePacket>> packetHandlers = new HashMap<>();
+    Map<String, List<Pair<IReceivePacket, Activity>>> packetHandlers = new HashMap<>();
 
     IReceivePacket packetHandler = new IReceivePacket() {
         @Override
@@ -29,8 +32,20 @@ public class Connection implements Runnable {
 
             String packetName = packet.getClass().getSimpleName();
             if (packetHandlers.containsKey(packetName)) {
-                for (IReceivePacket packetHandler : packetHandlers.get(packetName)) {
-                    packetHandler.onReceivePacket(client, packet);
+                for (Pair<IReceivePacket, Activity> packetHandler : packetHandlers.get(packetName)) {
+                    try {
+                        if (packetHandler.second != null) {
+                            packetHandler.second.runOnUiThread(() -> {
+                                packetHandler.first.onReceivePacket(client, packet);
+                            });
+                        } else {
+                            packetHandler.first.onReceivePacket(client, packet);
+                        }
+                    } catch (Exception err) {
+                        System.out.println("Fout in packet callback!");
+                        System.out.println(err.getMessage());
+                        assert(false); // Dit mag geen errors throwen
+                    }
                 }
             } else {
                 System.out.println("Packet dropped: " + packetName + "!");
@@ -38,13 +53,13 @@ public class Connection implements Runnable {
         }
     };
 
-    public <T extends Packet> void registerPacketCallback(Class<T> packetType, IReceivePacket onReceivePacket) {
+    public <T extends Packet> void registerPacketCallback(Class<T> packetType, IReceivePacket onReceivePacket, Activity activity) {
         String packetName = packetType.getSimpleName();
         if (!packetHandlers.containsKey(packetName)) {
             packetHandlers.put(packetName, new ArrayList<>());
         }
 
-        packetHandlers.get(packetName).add(onReceivePacket);
+        packetHandlers.get(packetName).add(new Pair<IReceivePacket, Activity>(onReceivePacket, activity));
     }
 
     public static Connection getInstance() {
@@ -62,7 +77,7 @@ public class Connection implements Runnable {
     private void Connect() {
         while (true) {
             try {
-                Socket socket = new Socket("172.16.10.18", 12345);
+                Socket socket = new Socket("172.16.33.118", 12345);
 
                 client = new Client(socket, packetHandler, (Client _client) -> handleDisconnect());
                 new Thread(client).start();
