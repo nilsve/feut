@@ -11,76 +11,85 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.feut.feut.connection.Connection;
 import com.app.feut.feut.connection.SendPacketTask;
+import com.feut.shared.connection.Client;
+import com.feut.shared.connection.IReceivePacket;
+import com.feut.shared.connection.packets.Packet;
 import com.feut.shared.connection.packets.RegisterAddressRequest;
+import com.feut.shared.connection.packets.RegisterAddressResponse;
+import com.feut.shared.connection.packets.RegisterResponse;
 
 public class NewAddressActivity extends AppCompatActivity {
-    private static boolean addressRegisterValid;
     private Context context = this;
+
+    TextView streetText;
+    TextView streetNumberText;
+    TextView additionText;
+    TextView zipCodeText;
+    TextView cityText;
 
     @Override
     protected synchronized void onCreate(Bundle savedInstanceState) {
-        addressRegisterValid = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_address);
 
-        TextView streetText = (TextView) findViewById(R.id.streetText);
-        TextView streetNumberText = (TextView) findViewById(R.id.streetNumberText);
-        TextView additionText = (TextView) findViewById(R.id.additionText);
-        TextView zipCodeText = (TextView) findViewById(R.id.zipCodeText);
-        TextView cityText = (TextView) findViewById(R.id.cityText);
+        streetText = findViewById(R.id.streetText);
+        streetNumberText = findViewById(R.id.streetNumberText);
+        additionText = findViewById(R.id.additionText);
+        zipCodeText = findViewById(R.id.zipCodeText);
+        cityText = findViewById(R.id.cityText);
 
         Button registerAddressButton = (Button) findViewById(R.id.registerAddressButton);
-        registerAddressButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public synchronized void onClick(View view) {
-                RegisterAddressRequest request = new RegisterAddressRequest();
-                request.street = streetText.getText().toString();
-                request.streetNumber = streetNumberText.getText().toString();
-                request.addition = additionText.getText().toString();
-                request.zipCode = zipCodeText.getText().toString();
-                request.city = cityText.getText().toString();
+        registerAddressButton.setOnClickListener(handleRegisterAddressClick);
 
-                new SendPacketTask().execute(request);
-                try {
-                    this.wait(500);
-                    // doe iets
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                    System.out.println("In OnClick: " + addressRegisterValid);
-
-                    if (addressRegisterValid) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setMessage("Je bent nu de beheerder van dit adres. Wil je direct iemand uitnodigen?")
-                                .setTitle("Adres aangemaakt")
-                                .setCancelable(false)
-                                .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        // Intent InviteActivity = new Intent(getApplicationContext(), InviteActivity.class);
-                                        // startActivity(InviteActivity);
-
-                                    }
-                                })
-                                .setNegativeButton("Nee", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                        startActivity(mainActivityIntent);
-                                    }
-                                });
-                        AlertDialog alertDialog = builder.create();
-                        alertDialog.show();
-                    } else {
-                        Toast.makeText(context, "Dit adres kan niet worden aangemaakt", Toast.LENGTH_SHORT);
-                    }
-                }
-
-            }
-        });
-
+        Connection.getInstance().registerPacketCallback(RegisterAddressResponse.class, handleRegisterResponse, this);
     }
 
-    public static void setAddressRegisterValid() { addressRegisterValid = true; }
+    IReceivePacket handleRegisterResponse = new IReceivePacket() {
+        @Override
+        public void onReceivePacket(Client client, Packet packet) {
+            RegisterAddressResponse response = (RegisterAddressResponse)packet;
+
+            if (response.success) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Je bent nu de beheerder van dit adres. Wil je direct iemand uitnodigen?")
+                        .setTitle("Adres aangemaakt")
+                        .setCancelable(false)
+                        .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // Intent InviteActivity = new Intent(getApplicationContext(), InviteActivity.class);
+                                // startActivity(InviteActivity);
+
+                            }
+                        })
+                        .setNegativeButton("Nee", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(mainActivityIntent);
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            } else {
+                Toast.makeText(context, "Dit adres kan niet worden aangemaakt", Toast.LENGTH_SHORT);
+            }
+        }
+    };
+
+    View.OnClickListener handleRegisterAddressClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            RegisterAddressRequest request = new RegisterAddressRequest();
+            request.street = streetText.getText().toString();
+            request.streetNumber = streetNumberText.getText().toString();
+            request.addition = additionText.getText().toString();
+            request.zipCode = zipCodeText.getText().toString();
+            request.city = cityText.getText().toString();
+
+            new SendPacketTask().execute(request);
+        }
+    };
 }
