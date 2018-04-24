@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="feut:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/feut_jar</output-path>
+    <root id="archive" name="feut.jar">
+      <element id="module-output" name="shared" />
+    </root>
+  </artifact>
+</component>
