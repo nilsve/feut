@@ -62,7 +62,6 @@ public class Client implements Runnable {
                         }
                     }
                 }
-
             } catch(ParseException ex) {
                 Helper.Log("Corrupted packet received!");
                 Disconnect();
