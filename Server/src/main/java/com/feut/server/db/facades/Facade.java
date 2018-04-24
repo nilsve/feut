@@ -11,8 +11,13 @@ import java.util.Map;
 
 public class Facade {
 
+    private enum QueryType {
+        SELECT,
+        UPDATE,
+    }
+
     // TODO: Error afhandeling!
-    public static List<Map<String, String>> Query(String query, String[] parameters) {
+    private static List<Map<String, String>> executeQuery(String query, String[] parameters, QueryType queryType) throws SQLException {
         List<Map<String, String>> result = new ArrayList<>();
         PreparedStatement stmt = null;
         try {
@@ -21,6 +26,10 @@ public class Facade {
                 stmt.setString(i + 1, parameters[i]);
             }
 
+            if (queryType == QueryType.UPDATE) {
+                stmt.execute();
+                return null;
+            }
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -33,24 +42,31 @@ public class Facade {
                 }
                 result.add(mappedRow);
             }
-        } catch (SQLException e ) {
-            System.out.println(e.getMessage());
-            return null;
         } finally {
             if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException e) {}
+                stmt.close();
             }
         }
 
         return result;
     }
 
-    public static Map<String, String> querySingle(String query, String[] parameters) {
-        List<Map<String, String>> result = Query(query, parameters);
-        assert(result.size() <= 1); // Er mag maar 1 row terug komen, anders moet je Query gebruiken
+    protected static List<Map<String, String>> Query(String query, String[] parameters) throws SQLException {
+        return executeQuery(query, parameters, QueryType.SELECT);
+    }
 
-        return result.get(0);
+    protected static void Update(String query, String[] parameters) throws SQLException {
+        List<Map<String, String>> result = executeQuery(query, parameters, QueryType.UPDATE);
+    }
+
+    protected static Map<String, String> querySingle(String query, String[] parameters) throws SQLException {
+        List<Map<String, String>> result = executeQuery(query, parameters, QueryType.SELECT);
+        assert (result.size() <= 1); // Er mag maar 1 row terug komen, anders moet je Query gebruiken
+
+        if (result.size() > 0) {
+            return result.get(0);
+        } else {
+            return null;
+        }
     }
 }

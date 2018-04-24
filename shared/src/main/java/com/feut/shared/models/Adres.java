@@ -1,11 +1,11 @@
 package com.feut.shared.models;
 
 public class Adres extends Model {
-    int adresId;
+    public int adresId;
 
-    String woonplaats;
-    String straat;
-    int huisnummer;
-    String toevoeging;
-    String postcode;
+    public String woonplaats;
+    public String straat;
+    public int huisnummer;
+    public String toevoeging;
+    public String postcode;
 }

@@ -1,5 +1,6 @@
 package com.feut.shared.connection;
 
+import com.feut.shared.connection.packets.ErrorPacket;
 import com.feut.shared.connection.packets.Packet;
 import org.json.simple.parser.ParseException;
 
@@ -49,7 +50,17 @@ public class Client implements Runnable {
                 }
 
                 for (IReceivePacket packetHandler : packetHandlers) {
-                    packetHandler.onReceivePacket(this, packet);
+                    try {
+                        packetHandler.onReceivePacket(this, packet);
+                    } catch (Exception err) {
+                        Helper.Log("Unhandled exception: " + err.getMessage());
+
+                        if (Helper.isDebugMode()) {
+                            ErrorPacket p = new ErrorPacket();
+                            p.message = err.getMessage();
+                            sendPacket(p);
+                        }
+                    }
                 }
 
             } catch(ParseException ex) {

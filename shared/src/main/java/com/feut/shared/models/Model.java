@@ -19,6 +19,10 @@ public class Model {
      */
 
     public static <M extends Model> Model Deserialize(Map<String, String> queryResult, Class<M> returnType) {
+        // Query resultaten kunnen leeg zijn
+        if (queryResult == null) {
+            return null;
+        }
 
         JSONObject object = new JSONObject();
 

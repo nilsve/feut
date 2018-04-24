@@ -1,9 +1,9 @@
 package com.feut.shared.models;
 
 public class HuisGebruiker extends Model {
-    int huisId;
-    int gebruikerId;
-    boolean beheerder;
-    boolean aanwezig;
-    boolean online;
+    public int huisId;
+    public int gebruikerId;
+    public boolean beheerder;
+    public boolean aanwezig;
+    public boolean online;
 }
