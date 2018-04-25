@@ -18,16 +18,11 @@ import com.feut.shared.connection.IReceivePacket;
 import com.feut.shared.connection.packets.Packet;
 import com.feut.shared.connection.packets.RegisterAddressRequest;
 import com.feut.shared.connection.packets.RegisterAddressResponse;
-import com.feut.shared.connection.packets.RegisterResponse;
 
 public class NewAddressActivity extends AppCompatActivity {
     private Context context = this;
-
-    TextView streetText;
-    TextView streetNumberText;
-    TextView additionText;
-    TextView zipCodeText;
-    TextView cityText;
+    private TextView streetText, streetNumberText, additionText, zipCodeText, cityText;
+    private String email;
 
     @Override
     protected synchronized void onCreate(Bundle savedInstanceState) {
@@ -39,6 +34,17 @@ public class NewAddressActivity extends AppCompatActivity {
         additionText = findViewById(R.id.additionText);
         zipCodeText = findViewById(R.id.zipCodeText);
         cityText = findViewById(R.id.cityText);
+
+        // Get parameters from previous activity
+        try {
+            Bundle b = getIntent().getExtras();
+            if (b != null) {
+                email = b.getString("email");
+            }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+
 
         Button registerAddressButton = (Button) findViewById(R.id.registerAddressButton);
         registerAddressButton.setOnClickListener(handleRegisterAddressClick);
@@ -53,28 +59,21 @@ public class NewAddressActivity extends AppCompatActivity {
 
             if (response.success) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Je bent nu de beheerder van dit adres. Wil je direct iemand uitnodigen?")
+                builder.setMessage("Je bent nu de beheerder van dit adres. Je kunt in de instellingen mensen uitnodigen.")
                         .setTitle("Adres aangemaakt")
                         .setCancelable(false)
-                        .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // Intent InviteActivity = new Intent(getApplicationContext(), InviteActivity.class);
-                                // startActivity(InviteActivity);
-
-                            }
-                        })
-                        .setNegativeButton("Nee", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Oke", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                mainActivityIntent.putExtra("email", email);
                                 startActivity(mainActivityIntent);
                             }
                         });
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             } else {
-                Toast.makeText(context, "Dit adres kan niet worden aangemaakt", Toast.LENGTH_SHORT);
+                Toast.makeText(context, "Dit adres kan niet worden aangemaakt", Toast.LENGTH_SHORT).show();
             }
         }
     };

@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         emailText = (TextView) findViewById(R.id.emailText);
-        passwordText = (TextView) findViewById(R.id.passwordText);
+        passwordText = (TextView) findViewById(R.id.passwordTitleText);
 
         Button loginButton = (Button) findViewById(R.id.loginButton);
         loginButton.setOnClickListener(handleLoginClick);
@@ -41,40 +41,31 @@ public class LoginActivity extends AppCompatActivity {
         Connection.getInstance().registerPacketCallback(LoginResponse.class, handleLoginResponse, this);
     }
 
-    IReceivePacket handleLoginResponse = new IReceivePacket() {
-        @Override
-        public void onReceivePacket(Client client, Packet packet) {
-            LoginResponse response = (LoginResponse)packet;
+    IReceivePacket handleLoginResponse = (Client client, Packet packet) -> {
+        LoginResponse response = (LoginResponse)packet;
 
-            if (response.success) {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            }
+        if (response.success) {
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
     };
 
-    View.OnClickListener handleRegisterClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            String tempEmail = "";
-            String tempPassword = "";
+    View.OnClickListener handleRegisterClick = (View view) -> {
+        String tempEmail = "";
+        String tempPassword = "";
 
-            tempEmail = emailText.getText().toString();
-            tempPassword = passwordText.getText().toString();
+        tempEmail = emailText.getText().toString();
+        tempPassword = passwordText.getText().toString();
 
-            Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
-            registerIntent.putExtra("email", tempEmail).putExtra("password", tempPassword);
-            startActivity(registerIntent);
-        }
+        Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
+        registerIntent.putExtra("email", tempEmail).putExtra("password", tempPassword);
+        startActivity(registerIntent);
     };
 
-    View.OnClickListener handleLoginClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            LoginRequest request = new LoginRequest();
-            request.username = emailText.getText().toString();
-            request.password = passwordText.getText().toString();
+    View.OnClickListener handleLoginClick = (View view) -> {
+        LoginRequest request = new LoginRequest();
+        request.username = emailText.getText().toString();
+        request.password = passwordText.getText().toString();
 
-            new SendPacketTask().execute(request);
-        }
+        new SendPacketTask().execute(request);
     };
 }

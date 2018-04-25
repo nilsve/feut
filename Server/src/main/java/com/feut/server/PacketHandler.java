@@ -34,6 +34,17 @@ public class PacketHandler implements IReceivePacket {
                 registerAddressResponse.success = true;
                 client.sendPacket(registerAddressResponse);
                 break;
+            case "UserRequest":
+                // Gebruiker opzoeken en data over gebruiker terugsturen
+                // Als gebruiker een adres heeft, adres misschien ook meesturen?
+
+                UserRequestResponse userRequestResponse = new UserRequestResponse();
+                userRequestResponse.firstName = "Indy";
+                userRequestResponse.lastName = "Maat";
+                userRequestResponse.street = "Adriaan van Bergenstraat";
+                userRequestResponse.streetNumber = "129";
+                client.sendPacket(userRequestResponse);
+                break;
         }
     }
 }
