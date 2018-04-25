@@ -33,25 +33,34 @@ public class Connection implements Runnable {
             String packetName = packet.getClass().getSimpleName();
             if (packetHandlers.containsKey(packetName)) {
                 for (Pair<IReceivePacket, Activity> packetHandler : packetHandlers.get(packetName)) {
-                    try {
-                        if (packetHandler.second != null) {
-                            packetHandler.second.runOnUiThread(() -> {
+                    if (packetHandler.second != null) {
+                        packetHandler.second.runOnUiThread(() -> {
+                            try {
                                 packetHandler.first.onReceivePacket(client, packet);
-                            });
-                        } else {
+                            } catch (Exception err) {
+                                handlePacketCallbackError(err);
+                            }
+                        });
+                    } else {
+                        try {
                             packetHandler.first.onReceivePacket(client, packet);
+                        } catch (Exception err) {
+                            handlePacketCallbackError(err);
                         }
-                    } catch (Exception err) {
-                        System.out.println("Fout in packet callback!");
-                        System.out.println(err.getMessage());
-                        assert(false); // Dit mag geen errors throwen
                     }
                 }
             } else {
-                System.out.println("Packet dropped: " + packetName + "!");
+                System.out.println("Geen geregistreerde packet handler gevonden voor: " + packetName + "!");
             }
         }
     };
+
+    // TODO: Refactor
+    void handlePacketCallbackError(Exception err) {
+        System.out.println("Fout in packet callback!");
+        System.out.println(err.getMessage());
+        assert(false); // Dit mag geen errors throwen
+    }
 
     public <T extends Packet> void registerPacketCallback(Class<T> packetType, IReceivePacket onReceivePacket, Activity activity) {
         String packetName = packetType.getSimpleName();
@@ -77,7 +86,7 @@ public class Connection implements Runnable {
     private void Connect() {
         while (true) {
             try {
-                Socket socket = new Socket("172.16.33.118", 12345);
+                Socket socket = new Socket("172.16.10.13", 12345);
 
                 client = new Client(socket, packetHandler, (Client _client) -> handleDisconnect());
                 new Thread(client).start();

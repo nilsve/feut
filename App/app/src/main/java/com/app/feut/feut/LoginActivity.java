@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             LoginRequest request = new LoginRequest();
-            request.username = emailText.getText().toString();
+            request.email = emailText.getText().toString();
             request.password = passwordText.getText().toString();
 
             new SendPacketTask().execute(request);

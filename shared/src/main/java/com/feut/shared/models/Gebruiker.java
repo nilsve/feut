@@ -1,8 +1,9 @@
 package com.feut.shared.models;
 
-public class Gebruiker {
-    int gebruiker_id;
-    String email;
-    String voornaam;
-    String achternaam;
+public class Gebruiker extends Model {
+    public int gebruikerId;
+    public String email;
+    public String voornaam;
+    public String achternaam;
+    public String password;
 }

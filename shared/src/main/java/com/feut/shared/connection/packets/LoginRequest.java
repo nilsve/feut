@@ -6,6 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoginRequest extends Packet {
-    public String username;
+    public String email;
     public String password;
 }
