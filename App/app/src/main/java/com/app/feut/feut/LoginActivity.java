@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.feut.feut.connection.Connection;
 import com.app.feut.feut.connection.SendPacketTask;
@@ -42,19 +43,23 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     IReceivePacket handleLoginResponse = (Client client, Packet packet) -> {
+
         LoginResponse response = (LoginResponse)packet;
+        String tempEmail = emailText.getText().toString();
+
 
         if (response.success) {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            Intent mainActivityIntent = new Intent(this, MainActivity.class);
+            mainActivityIntent.putExtra("email", tempEmail);
+            startActivity(mainActivityIntent);
+        } else {
+            Toast.makeText(this, "Combinatie van gebruikersnaam en wachtwoord onjuist!", Toast.LENGTH_SHORT);
         }
     };
 
     View.OnClickListener handleRegisterClick = (View view) -> {
-        String tempEmail = "";
-        String tempPassword = "";
-
-        tempEmail = emailText.getText().toString();
-        tempPassword = passwordText.getText().toString();
+        String tempEmail = emailText.getText().toString();
+        String tempPassword = passwordText.getText().toString();
 
         Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
         registerIntent.putExtra("email", tempEmail).putExtra("password", tempPassword);

@@ -4,4 +4,6 @@
     <string name="title_chat">Chat</string>
     <string name="title_settings">Instellingen</string>
     <string name="title_groceries">Boodschappen</string>
+    <string name="greeting_main">Hallo</string>
+    <string name="presency_toggle">Jouw aanwezigheid:</string>
 </resources>
