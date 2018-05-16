@@ -62,7 +62,7 @@
         android:textSize="8sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/inviteEmailText"
-        app:layout_constraintTop_toTopOf="@+id/inviteEmailText" />
+        app:layout_constraintTop_toBottomOf="@+id/inviteText" />
 
     <TextView
         android:id="@+id/passwordTitleText"
