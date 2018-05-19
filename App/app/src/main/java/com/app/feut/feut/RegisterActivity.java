@@ -1,5 +1,7 @@
 package com.app.feut.feut;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +21,8 @@ import com.feut.shared.connection.IReceivePacket;
 import com.feut.shared.connection.packets.Packet;
 import com.feut.shared.connection.packets.RegisterRequest;
 import com.feut.shared.connection.packets.RegisterResponse;
+
+import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -66,18 +70,21 @@ public class RegisterActivity extends AppCompatActivity {
                     .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Intent newAddresIntent = new Intent(context, NewAddressActivity.class);
-                            newAddresIntent.putExtra("email", emailText.getText().toString() ); // Misschien moet de RegisterRequest global en private worden?
-                            startActivity(newAddresIntent);
+                            if (!isForeground("NewAddresActivity")) {
+                                Intent newAddresIntent = new Intent(context, NewAddressActivity.class);
+                                newAddresIntent.putExtra("email", emailText.getText().toString()); // Misschien moet de RegisterRequest global en private worden?
+                                startActivity(newAddresIntent);
+                            }
 
                         }
                     })
                     .setNegativeButton("Nee", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
-                            mainActivityIntent.putExtra("email", emailText.getText().toString() ); // Misschien moet de RegisterRequest global en private worden?
-                            startActivity(mainActivityIntent);
+                            if (!isForeground("MainActivity")) {
+                                Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(mainActivityIntent);
+                            }
                         }
                     });
             AlertDialog alertDialog = builder.create();
@@ -89,12 +96,27 @@ public class RegisterActivity extends AppCompatActivity {
     };
 
     View.OnClickListener handleRegisterClick = (View view) -> {
-        RegisterRequest request = new RegisterRequest();
-        request.firstName = firstNameText.getText().toString();
-        request.lastName = lastNameText.getText().toString();
-        request.email = emailText.getText().toString();
-        request.password = passwordText.getText().toString();
+        // Check for email regex
+        if (emailText.getText().toString().matches(".+@.+\\..+")) {
+            RegisterRequest request = new RegisterRequest();
 
-        new SendPacketTask().execute(request);
+            request.voornaam = firstNameText.getText().toString();
+            request.achternaam = lastNameText.getText().toString();
+            request.email = emailText.getText().toString();
+            request.password = passwordText.getText().toString();
+
+            new SendPacketTask().execute(request);
+        } else {
+            Toast.makeText(this, "Dat is geen geldig emailadres", Toast.LENGTH_SHORT).show();
+        }
     };
+
+    public boolean isForeground(String PackageName){
+        // Check of het scherm wat je wilt starten niet al draait.
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        List< ActivityManager.RunningTaskInfo > task = manager.getRunningTasks(1);
+        ComponentName componentInfo = task.get(0).topActivity;
+        if(componentInfo.getPackageName().equals(PackageName)) return true;
+        return false;
+    }
 }

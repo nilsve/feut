@@ -1,5 +1,7 @@
 package com.app.feut.feut;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,8 @@ import com.feut.shared.connection.IReceivePacket;
 import com.feut.shared.connection.packets.LoginRequest;
 import com.feut.shared.connection.packets.LoginResponse;
 import com.feut.shared.connection.packets.Packet;
+
+import java.util.List;
 
 /**
  * Created by nils.van.eijk on 16-03-18.
@@ -49,11 +53,12 @@ public class LoginActivity extends AppCompatActivity {
 
 
         if (response.success) {
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            mainActivityIntent.putExtra("email", tempEmail);
-            startActivity(mainActivityIntent);
+            if (!isForeground("MainActivity")) {
+                Intent mainActivityIntent = new Intent(this, MainActivity.class);
+                startActivity(mainActivityIntent);
+            }
         } else {
-            Toast.makeText(this, "Combinatie van gebruikersnaam en wachtwoord onjuist!", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Combinatie van gebruikersnaam en wachtwoord onjuist.", Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -61,25 +66,33 @@ public class LoginActivity extends AppCompatActivity {
         String tempEmail = emailText.getText().toString();
         String tempPassword = passwordText.getText().toString();
 
-        Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
-        registerIntent.putExtra("email", tempEmail).putExtra("password", tempPassword);
-        startActivity(registerIntent);
+        if (!isForeground("RegisterActivity")) {
+            Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
+            startActivity(registerIntent);
+        }
     };
 
-<<<<<<< HEAD
-    View.OnClickListener handleLoginClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            LoginRequest request = new LoginRequest();
-            request.email = emailText.getText().toString();
-            request.password = passwordText.getText().toString();
-=======
+
     View.OnClickListener handleLoginClick = (View view) -> {
-        LoginRequest request = new LoginRequest();
-        request.username = emailText.getText().toString();
-        request.password = passwordText.getText().toString();
->>>>>>> feature/scherm_thuis_chat_settings
+        // Check for email regex
+        if (emailText.getText().toString().matches(".+@.+\\..+")) {
+                LoginRequest request = new LoginRequest();
 
-        new SendPacketTask().execute(request);
+                request.email = emailText.getText().toString();
+                request.password = passwordText.getText().toString();
+
+                new SendPacketTask().execute(request);
+        } else {
+            Toast.makeText(this, "Dat is geen geldig emailadres", Toast.LENGTH_SHORT).show();
+        }
     };
+
+    public boolean isForeground(String PackageName){
+        // Check of het scherm wat je wilt starten niet al draait.
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        List< ActivityManager.RunningTaskInfo > task = manager.getRunningTasks(1);
+        ComponentName componentInfo = task.get(0).topActivity;
+        if(componentInfo.getPackageName().equals(PackageName)) return true;
+        return false;
+    }
 }

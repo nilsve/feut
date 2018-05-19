@@ -5,13 +5,11 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
-import com.feut.shared.connection.packets.UserRequestResponse;
 
 public class MainActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private UserRequestResponse userRequestResponse;
 
     @Override
     protected synchronized void onCreate(Bundle savedInstanceState) {
