@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Feut</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">Thuis</string>
+    <string name="title_chat">Chat</string>
+    <string name="title_settings">Instellingen</string>
+    <string name="title_groceries">Boodschappen</string>
+    <string name="greeting_main">Hallo</string>
+    <string name="presency_toggle">Jouw aanwezigheid:</string>
 </resources>
