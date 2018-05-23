@@ -30,6 +30,7 @@ public class LogHelper implements Runnable {
 
     public static void startLogWriter() {
         assert(!isLogWriterRunning); // Deze functie mag maar 1x aangeroepen worden
+        isLogWriterRunning = true;
 
         new Thread(new LogHelper()).start();
     }
