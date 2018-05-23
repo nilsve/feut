@@ -35,6 +35,9 @@ public class GebruikerPacketHandler implements IReceivePacket {
                 registerResponse.success = true;
                 client.sendPacket(registerResponse);
                 break;
+            case "CheckinPacket":
+                CheckinPacket checkinPacket = (CheckinPacket)packet;
+                System.out.println("Checkin ontvangen: " + checkinPacket.chipId);
         }
     }
 }

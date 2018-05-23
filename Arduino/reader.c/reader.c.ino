@@ -23,20 +23,12 @@
 #define SS_PIN 10  //slave select pin
 #define RST_PIN 5  //reset pin
 MFRC522 mfrc522(SS_PIN, RST_PIN);        // instatiate a MFRC522 reader object.
-MFRC522::MIFARE_Key key;//create a MIFARE_Key struct named 'key', which will hold the card information
 
 void setup() {
   Serial.begin(115200);        // Initialize serial communications with the PC
   SPI.begin();               // Init SPI bus
   mfrc522.PCD_Init();        // Init MFRC522 card (in case you wonder what PCD means: proximity coupling device)
   
-  // Prepare the security key for the read and write functions - all six key bytes are set to 0xFF at chip delivery from the factory.
-  // Since the cards in the kit are new and the keys were never defined, they are 0xFF
-  // if we had a card that was programmed by someone else, we would need to know the key to be able to access it. This key would then need to be stored in 'key' instead.
-  
-  for (byte i = 0; i < 6; i++) {
-          key.keyByte[i] = 0xFF;//keyByte is defined in the "MIFARE_Key" 'struct' definition in the .h file of the library
-  }
 
 }
 
