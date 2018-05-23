@@ -10,14 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.app.feut.feut.connection.Connection;
-import com.app.feut.feut.connection.SendPacketTask;
-import com.feut.shared.connection.Client;
-import com.feut.shared.connection.IReceivePacket;
-import com.feut.shared.connection.packets.Packet;
-import com.feut.shared.connection.packets.UserRequest;
-import com.feut.shared.connection.packets.UserRequestResponse;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -50,19 +42,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        // Get Extras from activity
-        try {
-            Bundle b = getActivity().getIntent().getExtras();
-            if (b != null) {
-                UserRequest request = new UserRequest();
-                request.email = b.getString("email");
-                Connection.getInstance().registerPacketCallback(UserRequestResponse.class, handleUserRequestResponse, getActivity());
-                new SendPacketTask().execute(request);
-            }
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
-
         super.onViewCreated(view, savedInstanceState);
 
         titleText = (TextView) view.findViewById(R.id.titleText);
@@ -86,21 +65,5 @@ public class HomeFragment extends Fragment {
         homeListView.setAdapter(homeListViewAdapter);
 
     }
-
-
-    IReceivePacket handleUserRequestResponse = (Client client, Packet packet) -> {
-        UserRequestResponse userRequestResponse = (UserRequestResponse) packet;
-
-        firstname = ((UserRequestResponse) packet).firstName;
-        lastname = ((UserRequestResponse) packet).lastName;
-        street = ((UserRequestResponse) packet).street;
-        streetnumber = ((UserRequestResponse) packet).streetNumber;
-
-        titleText.setText("Hallo " + firstname + " " + lastname);
-        homePresentText.setText("Aanwezigheid " + street + " " + streetnumber);
-
-    };
-
-
 
 }

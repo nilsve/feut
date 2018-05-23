@@ -1,5 +1,6 @@
 package com.app.feut.feut;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         emailText = (TextView) findViewById(R.id.emailText);
-        passwordText = (TextView) findViewById(R.id.passwordTitleText);
+        passwordText = (TextView) findViewById(R.id.passwordText);
 
         Button loginButton = (Button) findViewById(R.id.loginButton);
         loginButton.setOnClickListener(handleLoginClick);
@@ -49,11 +50,12 @@ public class LoginActivity extends AppCompatActivity {
 
 
         if (response.success) {
-            Intent mainActivityIntent = new Intent(this, MainActivity.class);
-            mainActivityIntent.putExtra("email", tempEmail);
-            startActivity(mainActivityIntent);
+            if (!FeutApplication.getCurrentActivity().equals(MainActivity.class)) {
+                Intent mainActivityIntent = new Intent(this, MainActivity.class);
+                startActivity(mainActivityIntent);
+            }
         } else {
-            Toast.makeText(this, "Combinatie van gebruikersnaam en wachtwoord onjuist!", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Combinatie van gebruikersnaam en wachtwoord onjuist.", Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -61,25 +63,49 @@ public class LoginActivity extends AppCompatActivity {
         String tempEmail = emailText.getText().toString();
         String tempPassword = passwordText.getText().toString();
 
-        Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
-        registerIntent.putExtra("email", tempEmail).putExtra("password", tempPassword);
-        startActivity(registerIntent);
+        if (!FeutApplication.getCurrentActivity().equals(RegisterActivity.class)) {
+            Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
+            startActivity(registerIntent);
+        }
     };
 
-<<<<<<< HEAD
-    View.OnClickListener handleLoginClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
+
+    View.OnClickListener handleLoginClick = (View view) -> {
+        // Kijk of emailadressen kloppen en/of wachtwoorden ingevuld zijn voordat we een verzoek sturen.
+        String email = emailText.getText().toString();
+        String pass = passwordText.getText().toString();
+        String message = "";
+
+        if (email.equals("")){
+            message = "Er is geen emailadres ingevuld";
+        } else if (!Helper.isValidEmail(email)){
+            message = "Er is geen geldig emailadres ingevuld";
+        } else if (pass.equals("")){
+            message = "Er is geen wachtwoord ingevuld";
+        } else {
             LoginRequest request = new LoginRequest();
+
             request.email = emailText.getText().toString();
             request.password = passwordText.getText().toString();
-=======
-    View.OnClickListener handleLoginClick = (View view) -> {
-        LoginRequest request = new LoginRequest();
-        request.username = emailText.getText().toString();
-        request.password = passwordText.getText().toString();
->>>>>>> feature/scherm_thuis_chat_settings
 
-        new SendPacketTask().execute(request);
+            new SendPacketTask().execute(request);
+        }
+
+        if (!message.equals("")) Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     };
+
+    protected void onResume() {
+        super.onResume();
+        FeutApplication.setCurrentActivity(this);
+    }
+    protected void onPause() {
+        clearReferences();
+        super.onPause();
+    }
+
+    private void clearReferences(){
+        Activity currActivity = FeutApplication.getCurrentActivity();
+        if (this.equals(currActivity))
+            FeutApplication.setCurrentActivity(null);
+    }
 }
