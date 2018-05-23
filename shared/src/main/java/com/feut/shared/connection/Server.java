@@ -23,7 +23,7 @@ public class Server {
         while(true) {
             Client client = new Client(socket.accept(), onReceivePacket, (Client _client) -> onDisconnect(_client));
             new Thread(client).start();
-            Helper.Log("New client connected: " + client.getClientInfo());
+            LogHelper.Log(client, "Connected");
             clientList.add(client);
         }
     }

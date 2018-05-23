@@ -1,5 +1,7 @@
 package com.feut.server.db;
 
+import com.feut.shared.connection.LogHelper;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -27,25 +29,25 @@ public class DBConnection {
     }
 
     DBConnection() {
-        System.out.println("Database verbinding opzetten...");
+        LogHelper.Log("Database verbinding opzetten...");
 
         // Load the Connector/J driver
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
         } catch (ClassNotFoundException e) {
-            System.out.println("Kon de database driver niet vinden!");
+            LogHelper.Log("Kon de database driver niet vinden!");
             System.exit(1);
         } catch (Exception e) {
-            System.out.println("Kon de database driver niet laden!");
-            System.out.println(e.getMessage());
+            LogHelper.Log("Kon de database driver niet laden!");
+            LogHelper.Log(e.getMessage());
             System.exit(1);
         }
 
         try {
             connection = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
-            System.out.println("Kon niet verbinden met de database");
-            System.out.println(e.getMessage());
+            LogHelper.Log("Kon niet verbinden met de database");
+            LogHelper.Log(e.getMessage());
             System.exit(1);
         }
     }
