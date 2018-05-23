@@ -15,15 +15,17 @@ public class Main {
 
     public static void main(String[] args) {
 
+        LogHelper.toggleDebugMode(true);
+        LogHelper.startLogWriter();
+
         // Verbinding opzetten
         DBConnection.getInstance();
 
         try {
-            Helper.toggleDebugMode(true);
 
             MainPacketHandler packetHandler = new MainPacketHandler();
 
-            System.out.println("Starting server on port " + PORT);
+            LogHelper.Log("Starting server on port " + PORT);
             Server server = new Server(PORT, packetHandler);
 
             packetHandler.server = server;
@@ -31,12 +33,12 @@ public class Main {
             try {
                 server.Listen();
             } catch (IOException err) {
-                System.out.println("Error while trying to wait for sockets!");
-                System.out.println(err.toString());
+                LogHelper.Log("Error while trying to wait for sockets!");
+                LogHelper.Log(err.toString());
             }
         } catch (IOException err) {
-            System.out.println("Could not start the server!");
-            System.out.println(err.toString());
+            LogHelper.Log("Could not start the server!");
+            LogHelper.Log(err.toString());
         }
     }
 }

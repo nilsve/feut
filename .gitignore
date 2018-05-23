@@ -1,4 +1,6 @@
 *.class
 /Server/.idea/
+/Server/logs.txt
 /Arduino_Connector/.idea/
 /shared/out/
+

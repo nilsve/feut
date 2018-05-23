@@ -39,13 +39,13 @@ public class Client implements Runnable {
     }
 
     private void Listen() throws IOException, InterruptedException {
-        Helper.Log("Client " + getClientInfo() + " started listening");
+        LogHelper.Log(this, "Started listening");
         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         while(!socket.isClosed() && !shouldClose) {
             try {
                 Packet packet = Packet.readPacket(reader);
-                if (Helper.isDebugMode()) {
-                    Helper.Log("New packet received from " + getClientInfo());
+                if (LogHelper.isDebugMode()) {
+                    LogHelper.Log(this, "New packet received");
                     packetHistory.add(packet);
                 }
 
@@ -53,9 +53,9 @@ public class Client implements Runnable {
                     try {
                         packetHandler.onReceivePacket(this, packet);
                     } catch (Exception err) {
-                        Helper.Log("Unhandled exception: " + err.getMessage());
+                        LogHelper.Log(this, "Unhandled exception: " + err.getMessage());
 
-                        if (Helper.isDebugMode()) {
+                        if (LogHelper.isDebugMode()) {
                             ErrorPacket p = new ErrorPacket();
                             p.message = err.getMessage();
                             sendPacket(p);
@@ -63,10 +63,10 @@ public class Client implements Runnable {
                     }
                 }
             } catch(ParseException ex) {
-                Helper.Log("Corrupted packet received!");
+                LogHelper.Log(this, "Corrupted packet received!");
                 Disconnect();
             } catch (ClassNotFoundException ex) {
-                Helper.Log("Unknown packet received!");
+                LogHelper.Log(this, "Unknown packet received!");
                 Disconnect(); // Misschien niet helemaal nodig, maar het zou niet voor moeten komen.
             }
         }
@@ -80,7 +80,7 @@ public class Client implements Runnable {
             stream.write(buffer);
             stream.write(0);
         } catch (Exception err) {
-            Helper.Log("Could not send packet to " + getClientInfo());
+            LogHelper.Log(this, "Could not send packet");
             Disconnect();
         }
     }
@@ -99,11 +99,10 @@ public class Client implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.println("Listening");
             Listen();
         } catch (Exception err) {
-            Helper.Log("Client connection closed for " + getClientInfo());
-            Helper.Log(err.getMessage());
+            LogHelper.Log(this, "Client connection closed");
+            LogHelper.Log(this, err.getMessage());
         }
 
     }
