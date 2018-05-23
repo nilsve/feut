@@ -1,5 +1,6 @@
 package com.app.feut.feut;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -91,4 +92,19 @@ public class NewAddressActivity extends AppCompatActivity {
             new SendPacketTask().execute(request);
         }
     };
+
+    protected void onResume() {
+        super.onResume();
+        FeutApplication.setCurrentActivity(this);
+    }
+    protected void onPause() {
+        clearReferences();
+        super.onPause();
+    }
+
+    private void clearReferences(){
+        Activity currActivity = FeutApplication.getCurrentActivity();
+        if (this.equals(currActivity))
+            FeutApplication.setCurrentActivity(null);
+    }
 }
