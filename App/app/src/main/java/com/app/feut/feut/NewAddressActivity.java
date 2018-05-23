@@ -1,5 +1,6 @@
 package com.app.feut.feut;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,26 +36,13 @@ public class NewAddressActivity extends AppCompatActivity {
         zipCodeText = findViewById(R.id.zipCodeText);
         cityText = findViewById(R.id.cityText);
 
-        // Get parameters from previous activity
-        try {
-            Bundle b = getIntent().getExtras();
-            if (b != null) {
-                email = b.getString("email");
-            }
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
-
-
         Button registerAddressButton = (Button) findViewById(R.id.registerAddressButton);
         registerAddressButton.setOnClickListener(handleRegisterAddressClick);
 
         Connection.getInstance().registerPacketCallback(RegisterAddressResponse.class, handleRegisterResponse, this);
     }
 
-    IReceivePacket handleRegisterResponse = new IReceivePacket() {
-        @Override
-        public void onReceivePacket(Client client, Packet packet) {
+    IReceivePacket handleRegisterResponse = (Client client, Packet packet) -> {
             RegisterAddressResponse response = (RegisterAddressResponse)packet;
 
             if (response.success) {
@@ -65,9 +53,11 @@ public class NewAddressActivity extends AppCompatActivity {
                         .setPositiveButton("Oke", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                mainActivityIntent.putExtra("email", email);
-                                startActivity(mainActivityIntent);
+                                if (!FeutApplication.getCurrentActivity().equals(MainActivity.class)) {
+                                    Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                    mainActivityIntent.putExtra("email", email);
+                                    startActivity(mainActivityIntent);
+                                }
                             }
                         });
                 AlertDialog alertDialog = builder.create();
@@ -75,20 +65,53 @@ public class NewAddressActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(context, "Dit adres kan niet worden aangemaakt", Toast.LENGTH_SHORT).show();
             }
-        }
     };
 
-    View.OnClickListener handleRegisterAddressClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
+    View.OnClickListener handleRegisterAddressClick = (View view) -> {
+        String street = streetText.getText().toString();
+        String num = streetNumberText.getText().toString();
+        String add = additionText.getText().toString();
+        String zip = zipCodeText.getText().toString();
+        String city = cityText.getText().toString();
+        String message = "";
+
+        if (street.equals("")) {
+            message = "Er is geen straatnaam ingevoerd";
+        } else if (num.equals("")) {
+            message = "Er is geen huisnummer ingevoerd";
+        } else if (zip.equals("")) {
+            message = "Er is geen postcode ingevoerd";
+        } else if (!zip.matches("(\\d{4})([a-zA-Z]{2})")) {
+            message = "Er is geen geldige postcode ingevoerd";
+        } else if (city.equals("")) {
+            message = "Er is geen straatnaam ingevoerd";
+        } else {
             RegisterAddressRequest request = new RegisterAddressRequest();
-            request.street = streetText.getText().toString();
-            request.streetNumber = streetNumberText.getText().toString();
-            request.addition = additionText.getText().toString();
-            request.zipCode = zipCodeText.getText().toString();
-            request.city = cityText.getText().toString();
+
+            request.street = street;
+            request.streetNumber = num;
+            request.addition = add;
+            request.zipCode = zip;
+            request.city = city;
 
             new SendPacketTask().execute(request);
         }
+
+        if (!message.equals("")) Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     };
+
+    protected void onResume() {
+        super.onResume();
+        FeutApplication.setCurrentActivity(this);
+    }
+    protected void onPause() {
+        clearReferences();
+        super.onPause();
+    }
+
+    private void clearReferences(){
+        Activity currActivity = FeutApplication.getCurrentActivity();
+        if (this.equals(currActivity))
+            FeutApplication.setCurrentActivity(null);
+    }
 }

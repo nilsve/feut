@@ -1,5 +1,6 @@
 package com.app.feut.feut;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,7 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
         firstNameText = (TextView) findViewById(R.id.firstNameText);
         lastNameText = (TextView) findViewById(R.id.lastNameText);
         emailText = (TextView) findViewById(R.id.emailText);
-        passwordText = (TextView) findViewById(R.id.passwordTitleText);
+        passwordText = (TextView) findViewById(R.id.passwordText);
 
 
         // Get parameters from previous activity
@@ -60,24 +61,27 @@ public class RegisterActivity extends AppCompatActivity {
         RegisterResponse response = (RegisterResponse)packet;
         if (response.success) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setMessage("Account is aangemaakt, wil je nu een adres aanmaken?")
-                    .setTitle("Account aangemaakt")
+            builder.setMessage("Je nieuwe account is geregistreerd, wil je nu een adres registreren?")
+                    .setTitle("Account geregistreerd")
                     .setCancelable(false)
                     .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Intent newAddresIntent = new Intent(context, NewAddressActivity.class);
-                            newAddresIntent.putExtra("email", emailText.getText().toString() ); // Misschien moet de RegisterRequest global en private worden?
-                            startActivity(newAddresIntent);
+                            if (!FeutApplication.getCurrentActivity().equals(NewAddressActivity.class)) {
+                                Intent newAddresIntent = new Intent(context, NewAddressActivity.class);
+                                newAddresIntent.putExtra("email", emailText.getText().toString()); // Misschien moet de RegisterRequest global en private worden?
+                                startActivity(newAddresIntent);
+                            }
 
                         }
                     })
                     .setNegativeButton("Nee", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
-                            mainActivityIntent.putExtra("email", emailText.getText().toString() ); // Misschien moet de RegisterRequest global en private worden?
-                            startActivity(mainActivityIntent);
+                            if (!FeutApplication.getCurrentActivity().equals(MainActivity.class)) {
+                                Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(mainActivityIntent);
+                            }
                         }
                     });
             AlertDialog alertDialog = builder.create();
@@ -89,12 +93,50 @@ public class RegisterActivity extends AppCompatActivity {
     };
 
     View.OnClickListener handleRegisterClick = (View view) -> {
-        RegisterRequest request = new RegisterRequest();
-        request.firstName = firstNameText.getText().toString();
-        request.lastName = lastNameText.getText().toString();
-        request.email = emailText.getText().toString();
-        request.password = passwordText.getText().toString();
+        // Kijk of emailadressen kloppen en/of wachtwoorden/voornaam en achternaam ingevuld zijn voordat we een verzoek sturen.
 
-        new SendPacketTask().execute(request);
+        String vnaam = firstNameText.getText().toString();
+        String anaam = lastNameText.getText().toString();
+        String email = emailText.getText().toString();
+        String pass = passwordText.getText().toString();
+        String message = "";
+
+        if (vnaam.equals("")) {
+            message = "Er is geen voornaam ingevuld";
+        } else if (anaam.equals("")) {
+            message = "Er is geen achternaam ingevuld";
+        } else if (email.equals("")) {
+            message = "Er is geen emailadres ingevuld";
+        } else if (!Helper.isValidEmail(email)) {
+            message = "Er is geen geldig emailadres ingevuld";
+        } else if (pass.equals("")) {
+            message = "Er is geen wachtwoord ingevuld";
+        } else {
+            RegisterRequest request = new RegisterRequest();
+
+            request.voornaam = vnaam;
+            request.achternaam = anaam;
+            request.email = email;
+            request.password = pass;
+
+            new SendPacketTask().execute(request);
+        }
+
+        if (!message.equals("")) Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     };
+
+    protected void onResume() {
+        super.onResume();
+        FeutApplication.setCurrentActivity(this);
+    }
+    protected void onPause() {
+        clearReferences();
+        super.onPause();
+    }
+
+    private void clearReferences(){
+        Activity currActivity = FeutApplication.getCurrentActivity();
+        if (this.equals(currActivity))
+            FeutApplication.setCurrentActivity(null);
+    }
 }

@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
-    static String url = "jdbc:mysql://127.0.0.1:3306/feut";
+    static String url = "jdbc:mysql://127.0.0.1:3306/feut?useUnicode=true&characterEncoding=UTF8";
     static String user = "root";
     static String password = "";
 
