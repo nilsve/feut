@@ -1,3 +1,4 @@
 *.class
 /Server/.idea/
+/Arduino_Connector/.idea/
 /shared/out/
