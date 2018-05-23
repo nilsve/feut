@@ -66,9 +66,11 @@ public class NewAddressActivity extends AppCompatActivity {
                         .setPositiveButton("Oke", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                mainActivityIntent.putExtra("email", email);
-                                startActivity(mainActivityIntent);
+                                if (!FeutApplication.getCurrentActivity().equals(MainActivity.class)) {
+                                    Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                    mainActivityIntent.putExtra("email", email);
+                                    startActivity(mainActivityIntent);
+                                }
                             }
                         });
                 AlertDialog alertDialog = builder.create();
