@@ -19,6 +19,7 @@ public class MainPacketHandler implements IReceivePacket {
     @Override
     public void onReceivePacket(Client client, Packet packet) throws SQLException {
         switch (packet.getClass().getSimpleName()) {
+            case "CheckinPacket":
             case "LoginRequest":
             case "RegisterRequest":
                 gebruikerHandler.onReceivePacket(client, packet);

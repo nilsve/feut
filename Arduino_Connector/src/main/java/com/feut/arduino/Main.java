@@ -14,6 +14,9 @@ public class Main {
     static ArduinoCommunicator arduinoCommunicator = null;
 
     public static void main(String[] args) {
+
+        Connect();
+
         SerialPort ports[] = SerialPort.getCommPorts();
 
         System.out.println("Kies het poort nummer:");
@@ -29,15 +32,14 @@ public class Main {
             System.out.println("Invalid port number!");
         }
 
-        arduinoCommunicator = new ArduinoCommunicator(ports[portNumber]);
+        arduinoCommunicator = new ArduinoCommunicator(client, ports[portNumber]);
         arduinoCommunicator.Listen();
     }
 
     static void Connect() {
         try {
-            Socket socket = new Socket("localhost", 12345);
+            Socket socket = new Socket("145.93.164.12", 12345);
             client = new Client(socket, packetHandler, (Client _client) -> handleDisconnect());
-
         } catch (IOException e) {
             e.printStackTrace();
         }
