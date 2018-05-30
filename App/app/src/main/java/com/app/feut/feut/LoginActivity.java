@@ -65,6 +65,8 @@ public class LoginActivity extends AppCompatActivity {
 
         if (!FeutApplication.getCurrentActivity().equals(RegisterActivity.class)) {
             Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
+            registerIntent.putExtra("email", tempEmail);
+            registerIntent.putExtra("password", tempPassword);
             startActivity(registerIntent);
         }
     };
