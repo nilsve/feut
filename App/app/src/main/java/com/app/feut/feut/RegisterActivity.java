@@ -114,8 +114,8 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             RegisterRequest request = new RegisterRequest();
 
-            request.voornaam = vnaam;
-            request.achternaam = anaam;
+            request.firstName = vnaam;
+            request.lastName = anaam;
             request.email = email;
             request.password = pass;
 
