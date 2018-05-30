@@ -12,44 +12,44 @@ public class GebruikerPacketHandler implements IReceivePacket {
     @Override
     public void onReceivePacket(Client client, Packet packet) throws SQLException {
         switch (packet.getClass().getSimpleName()) {
-            case "LoginRequest":
+            case "LoginRequest":{
                 LoginRequest request = (LoginRequest) packet;
 
-                Gebruiker gebruiker1 = GebruikerFacade.byEmailWachtwoord(request.email, request.password);
+                Gebruiker gebruiker = GebruikerFacade.byEmailWachtwoord(request.email, request.password);
                 LoginResponse loginResponse = new LoginResponse();
 
-                if (gebruiker1 != null) {
+                if (gebruiker != null) {
                     loginResponse.success = true;
-                    gebruiker1.password = ""; // Het wachtwoord lijkt me geen goed idee om mee te sturen..
-                    loginResponse.gebruiker = gebruiker1;
+                    gebruiker.password = ""; // Het wachtwoord lijkt me geen goed idee om mee te sturen..
+                    loginResponse.gebruiker = gebruiker;
                 } else {
                     loginResponse.success = false;
                 }
 
                 client.sendPacket(loginResponse);
-                break;
-            case "RegisterRequest":
+                break;}
+            case "RegisterRequest": {
                 // Pakket ontvangen en casten naar RegisterRequest
                 RegisterRequest registerRequest = (RegisterRequest) packet;
                 // Gebruiker aanmaken, dit object gebruikt de db om queries te doen
-                Gebruiker gebruiker2 = new Gebruiker();
-                gebruiker2.voornaam = registerRequest.firstName;
-                gebruiker2.achternaam = registerRequest.lastName;
-                gebruiker2.email = registerRequest.email;
-                gebruiker2.password = registerRequest.password;
+                Gebruiker gebruiker = new Gebruiker();
+                gebruiker.voornaam = registerRequest.firstName;
+                gebruiker.achternaam = registerRequest.lastName;
+                gebruiker.email = registerRequest.email;
+                gebruiker.password = registerRequest.password;
 
                 // Pakket voor respons klaarmaken, en afhankelijk van exception in query waarde geven
                 RegisterResponse registerResponse = new RegisterResponse();
 
                 try {
-                    GebruikerFacade.registreerGebruiker(gebruiker2);
+                    GebruikerFacade.registreerGebruiker(gebruiker);
                     registerResponse.success = true;
                 } catch (Exception e) {
                     registerResponse.success = false;
                 }
 
                 client.sendPacket(registerResponse);
-                break;
+                break;}
         }
     }
 }
