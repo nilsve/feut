@@ -15,13 +15,13 @@ public class GebruikerPacketHandler implements IReceivePacket {
             case "LoginRequest":
                 LoginRequest request = (LoginRequest) packet;
 
-                Gebruiker gebruiker = GebruikerFacade.byEmailWachtwoord(request.email, request.password);
+                Gebruiker gebruiker1 = GebruikerFacade.byEmailWachtwoord(request.email, request.password);
                 LoginResponse loginResponse = new LoginResponse();
 
-                if (gebruiker != null) {
+                if (gebruiker1 != null) {
                     loginResponse.success = true;
-                    gebruiker.password = ""; // Het wachtwoord lijkt me geen goed idee om mee te sturen..
-                    loginResponse.gebruiker = gebruiker;
+                    gebruiker1.password = ""; // Het wachtwoord lijkt me geen goed idee om mee te sturen..
+                    loginResponse.gebruiker = gebruiker1;
                 } else {
                     loginResponse.success = false;
                 }
@@ -29,10 +29,25 @@ public class GebruikerPacketHandler implements IReceivePacket {
                 client.sendPacket(loginResponse);
                 break;
             case "RegisterRequest":
-                // Kijken of account al bestaat in database, anders aanmaken.
+                // Pakket ontvangen en casten naar RegisterRequest
+                RegisterRequest registerRequest = (RegisterRequest) packet;
+                // Gebruiker aanmaken, dit object gebruikt de db om queries te doen
+                Gebruiker gebruiker2 = new Gebruiker();
+                gebruiker2.voornaam = registerRequest.firstName;
+                gebruiker2.achternaam = registerRequest.lastName;
+                gebruiker2.email = registerRequest.email;
+                gebruiker2.password = registerRequest.password;
 
+                // Pakket voor respons klaarmaken, en afhankelijk van exception in query waarde geven
                 RegisterResponse registerResponse = new RegisterResponse();
-                registerResponse.success = true;
+
+                try {
+                    GebruikerFacade.registreerGebruiker(gebruiker2);
+                    registerResponse.success = true;
+                } catch (Exception e) {
+                    registerResponse.success = false;
+                }
+
                 client.sendPacket(registerResponse);
                 break;
         }
