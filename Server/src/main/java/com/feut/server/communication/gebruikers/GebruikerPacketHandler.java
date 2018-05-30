@@ -12,7 +12,7 @@ public class GebruikerPacketHandler implements IReceivePacket {
     @Override
     public void onReceivePacket(Client client, Packet packet) throws SQLException {
         switch (packet.getClass().getSimpleName()) {
-            case "LoginRequest":{
+            case "LoginRequest": {
                 LoginRequest request = (LoginRequest) packet;
 
                 Gebruiker gebruiker = GebruikerFacade.byEmailWachtwoord(request.email, request.password);
@@ -27,7 +27,8 @@ public class GebruikerPacketHandler implements IReceivePacket {
                 }
 
                 client.sendPacket(loginResponse);
-                break;}
+                break;
+            }
             case "RegisterRequest": {
                 // Pakket ontvangen en casten naar RegisterRequest
                 RegisterRequest registerRequest = (RegisterRequest) packet;
@@ -38,7 +39,7 @@ public class GebruikerPacketHandler implements IReceivePacket {
                 gebruiker.email = registerRequest.email;
                 gebruiker.password = registerRequest.password;
 
-                // Pakket voor respons klaarmaken, en afhankelijk van exception in query waarde geven
+                // Pakket voor response klaarmaken, en afhankelijk van exception in query waarde geven
                 RegisterResponse registerResponse = new RegisterResponse();
 
                 try {
@@ -49,7 +50,13 @@ public class GebruikerPacketHandler implements IReceivePacket {
                 }
 
                 client.sendPacket(registerResponse);
-                break;}
+                break;
+            }
+            case "CheckinPacket": {
+                CheckinPacket checkinPacket = (CheckinPacket)packet;
+                System.out.println("Checkin ontvangen: " + checkinPacket.chipId);
+                break;
+            }
         }
     }
 }
