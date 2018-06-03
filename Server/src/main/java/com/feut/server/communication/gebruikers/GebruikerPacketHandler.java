@@ -5,6 +5,7 @@ import com.feut.shared.connection.Client;
 import com.feut.shared.connection.IReceivePacket;
 import com.feut.shared.connection.packets.*;
 import com.feut.shared.models.Gebruiker;
+import com.feut.shared.models.HuisGebruiker;
 
 import java.sql.SQLException;
 
@@ -55,6 +56,29 @@ public class GebruikerPacketHandler implements IReceivePacket {
             case "CheckinPacket": {
                 CheckinPacket checkinPacket = (CheckinPacket)packet;
                 System.out.println("Checkin ontvangen: " + checkinPacket.chipId);
+                break;
+            }
+            case "PresentRequest": {
+                PresentRequest presentRequest = (PresentRequest) packet;
+                PresentResponse presentResponse = new PresentResponse();
+
+                try {
+                    GebruikerFacade.toggleAanwezigheid(Integer.parseInt(presentRequest.gebruiker_id));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
+                }
+
+
+                try {
+                    HuisGebruiker huisGebruiker = GebruikerFacade.getHuisGebruiker(Integer.parseInt(presentRequest.gebruiker_id));
+                    if (huisGebruiker.aanwezig == 1) presentResponse.aanwezig = true;
+                    else presentResponse.aanwezig = false;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
+                }
+                client.sendPacket(presentResponse);
                 break;
             }
         }
