@@ -68,9 +68,10 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (!FeutApplication.getCurrentActivity().equals(NewAddressActivity.class)) {
-                                Intent newAddresIntent = new Intent(context, NewAddressActivity.class);
-                                newAddresIntent.putExtra("email", emailText.getText().toString()); // Misschien moet de RegisterRequest global en private worden?
-                                startActivity(newAddresIntent);
+                                Intent newAddressIntent = new Intent(context, NewAddressActivity.class);
+                                newAddressIntent.putExtra("email", emailText.getText().toString());
+                                newAddressIntent.putExtra("password", passwordText.getText().toString());
+                                startActivity(newAddressIntent);
                             }
 
                         }
@@ -114,8 +115,8 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             RegisterRequest request = new RegisterRequest();
 
-            request.voornaam = vnaam;
-            request.achternaam = anaam;
+            request.firstName = vnaam;
+            request.lastName = anaam;
             request.email = email;
             request.password = pass;
 

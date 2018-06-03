@@ -14,14 +14,13 @@
         android:layout_marginLeft="50dp"
         android:layout_marginRight="150dp"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
-        android:hint="straatnaam"
+        android:hint="Straatnaam"
         android:inputType="textPersonName"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleText" />
+        app:layout_constraintTop_toBottomOf="@+id/newAddressTitle" />
 
     <EditText
         android:id="@+id/streetNumberText"
@@ -29,14 +28,13 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="100dp"
         android:layout_marginRight="100dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
-        android:hint="num."
+        android:hint="Num."
         android:inputType="number"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/streetText"
-        app:layout_constraintTop_toBottomOf="@+id/titleText" />
+        app:layout_constraintTop_toBottomOf="@+id/newAddressTitle" />
 
     <EditText
         android:id="@+id/additionText"
@@ -44,14 +42,13 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="50dp"
         android:layout_marginRight="50dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
-        android:hint="toev."
+        android:hint="Toev."
         android:inputType="textPersonName"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/streetNumberText"
-        app:layout_constraintTop_toBottomOf="@+id/titleText" />
+        app:layout_constraintTop_toBottomOf="@+id/newAddressTitle" />
 
     <EditText
         android:id="@+id/zipCodeText"
@@ -62,7 +59,7 @@
         android:layout_marginRight="250dp"
         android:layout_marginStart="50dp"
         android:ems="10"
-        android:hint="postcode"
+        android:hint="Postcode"
         android:inputType="textPersonName"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +73,7 @@
         android:layout_marginEnd="50dp"
         android:layout_marginRight="50dp"
         android:ems="10"
-        android:hint="stad"
+        android:hint="Woonplaats"
         android:inputType="textPersonName"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -112,5 +109,36 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/zipCodeText" />
+
+    <TextView
+        android:id="@+id/newAddressTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="8dp"
+        android:text="Adresgegevens"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addressNameText" />
+
+    <EditText
+        android:id="@+id/addressNameText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Bijnaam huis..."
+        android:inputType="textPersonName"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
 </android.support.constraint.ConstraintLayout>
