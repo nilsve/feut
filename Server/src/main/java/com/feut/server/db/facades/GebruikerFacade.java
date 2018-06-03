@@ -1,5 +1,6 @@
 package com.feut.server.db.facades;
 
+import com.feut.shared.models.Adres;
 import com.feut.shared.models.Gebruiker;
 
 import java.sql.SQLException;
