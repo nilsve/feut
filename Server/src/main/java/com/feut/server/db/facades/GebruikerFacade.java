@@ -31,11 +31,11 @@ public class GebruikerFacade extends Facade {
 
         int tempAanwezig = 0;
         if (huisGebruiker.aanwezig == 0) tempAanwezig = 1;
-        
+
         Update("UPDATE huis_gebruiker SET aanwezig = ? WHERE gebruiker_id = ?", new String[] {Integer.toString(tempAanwezig), Integer.toString(gebruiker_id)});
     }
     public static HuisGebruiker getHuisGebruiker(int gebruiker_id) throws Exception {
-        return (HuisGebruiker)HuisGebruiker.Deserialize(querySingle("SELECT * FROM huis_gebruiker WHERE gebruiker_id = ?", new String[]{Integer.toString(gebruiker_id)}), HuisGebruiker.class);
+        return (HuisGebruiker)HuisGebruiker.Deserialize(querySingle("SELECT * FROM huis_gebruiker WHERE huis_id = ? LIMIT 1", new String[]{Integer.toString(gebruiker_id)}), HuisGebruiker.class);
 
     }
 

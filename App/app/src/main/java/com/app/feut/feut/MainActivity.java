@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                 password = b.getString("password");
                 userid = b.getInt("userid");
                 PresentRequest presentRequest = new PresentRequest();
-                presentRequest.gebruiker_id = Integer.toString(userid);
+                presentRequest.gebruikerId = userid;
                 new SendPacketTask().execute(presentRequest);
             }
         } catch (RuntimeException e) {
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 // Elke keer als de waarde van de switch veranderd stuurt hij opnieuw een pakket met het gebruikers id.
                 PresentRequest presentRequest = new PresentRequest();
-                presentRequest.gebruiker_id = Integer.toString(userid);
+                presentRequest.gebruikerId = userid;
                 new SendPacketTask().execute(presentRequest);
             }
         });

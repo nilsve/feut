@@ -63,7 +63,7 @@ public class GebruikerPacketHandler implements IReceivePacket {
                 PresentResponse presentResponse = new PresentResponse();
 
                 try {
-                    GebruikerFacade.toggleAanwezigheid(Integer.parseInt(presentRequest.gebruiker_id));
+                    GebruikerFacade.toggleAanwezigheid(presentRequest.gebruikerId);
                 } catch (Exception e) {
                     e.printStackTrace();
                     break;
@@ -71,7 +71,7 @@ public class GebruikerPacketHandler implements IReceivePacket {
 
 
                 try {
-                    HuisGebruiker huisGebruiker = GebruikerFacade.getHuisGebruiker(Integer.parseInt(presentRequest.gebruiker_id));
+                    HuisGebruiker huisGebruiker = GebruikerFacade.getHuisGebruiker(presentRequest.gebruikerId);
                     if (huisGebruiker.aanwezig == 1) presentResponse.aanwezig = true;
                     else presentResponse.aanwezig = false;
                 } catch (Exception e) {
