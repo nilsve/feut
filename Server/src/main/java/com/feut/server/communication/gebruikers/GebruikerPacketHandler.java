@@ -59,9 +59,12 @@ public class GebruikerPacketHandler implements IReceivePacket {
                 break;
             }
             case "PresentRequest": {
+                // Pakket welke ontvangen wordt casten, en de nieuwe direct klaarzetten voor gebruik.
                 PresentRequest presentRequest = (PresentRequest) packet;
                 PresentResponse presentResponse = new PresentResponse();
 
+                // We spreken de gebruikersfacade aan om vervolgens de functie toggleAanwezigheid te gebruiken. 
+                // Deze functie heeft het userid nodig van de gebruiker, welke wordt vergaard tijdens inloggen. 
                 try {
                     GebruikerFacade.toggleAanwezigheid(presentRequest.gebruikerId);
                 } catch (Exception e) {
@@ -69,7 +72,9 @@ public class GebruikerPacketHandler implements IReceivePacket {
                     break;
                 }
 
-
+                // De gebruikersfacade heeft een functie welke een volledige Huisgebruiker teruggeeft
+                // TODO: Wellicht kijken of deze functie alleen de aanwezigheid teruggeeft, 
+                // Echter misschien is het handig om dat hele huisGebuiker object later in het project nog te gebruiken.
                 try {
                     HuisGebruiker huisGebruiker = GebruikerFacade.getHuisGebruiker(presentRequest.gebruikerId);
                     if (huisGebruiker.aanwezig == 1) presentResponse.aanwezig = true;
