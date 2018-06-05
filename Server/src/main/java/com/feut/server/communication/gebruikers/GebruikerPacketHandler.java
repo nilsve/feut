@@ -5,6 +5,7 @@ import com.feut.shared.connection.Client;
 import com.feut.shared.connection.IReceivePacket;
 import com.feut.shared.connection.packets.*;
 import com.feut.shared.models.Gebruiker;
+import com.feut.shared.models.HuisGebruiker;
 
 import java.sql.SQLException;
 
@@ -55,6 +56,34 @@ public class GebruikerPacketHandler implements IReceivePacket {
             case "CheckinPacket": {
                 CheckinPacket checkinPacket = (CheckinPacket)packet;
                 System.out.println("Checkin ontvangen: " + checkinPacket.chipId);
+                break;
+            }
+            case "PresentRequest": {
+                // Pakket welke ontvangen wordt casten, en de nieuwe direct klaarzetten voor gebruik.
+                PresentRequest presentRequest = (PresentRequest) packet;
+                PresentResponse presentResponse = new PresentResponse();
+
+                // We spreken de gebruikersfacade aan om vervolgens de functie toggleAanwezigheid te gebruiken. 
+                // Deze functie heeft het userid nodig van de gebruiker, welke wordt vergaard tijdens inloggen. 
+                try {
+                    GebruikerFacade.toggleAanwezigheid(presentRequest.gebruikerId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
+                }
+
+                // De gebruikersfacade heeft een functie welke een volledige Huisgebruiker teruggeeft
+                // TODO: Wellicht kijken of deze functie alleen de aanwezigheid teruggeeft, 
+                // Echter misschien is het handig om dat hele huisGebuiker object later in het project nog te gebruiken.
+                try {
+                    HuisGebruiker huisGebruiker = GebruikerFacade.getHuisGebruiker(presentRequest.gebruikerId);
+                    if (huisGebruiker.aanwezig == 1) presentResponse.aanwezig = true;
+                    else presentResponse.aanwezig = false;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
+                }
+                client.sendPacket(presentResponse);
                 break;
             }
         }
