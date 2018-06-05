@@ -15,6 +15,7 @@ import com.feut.shared.connection.IReceivePacket;
 import com.feut.shared.connection.packets.Packet;
 import com.feut.shared.connection.packets.PresentRequest;
 import com.feut.shared.connection.packets.PresentResponse;
+import com.feut.shared.models.Gebruiker;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -22,8 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private Switch aSwitch;
-    private String email, password;
-    private int userid;
+    private Gebruiker gebruiker = null;
     private boolean present, updated = false;
 
     @Override
@@ -46,12 +46,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             Bundle b = getIntent().getExtras();
             if (b != null) {
-                email = b.getString("email");
-                password = b.getString("password");
-                userid = b.getInt("userid");
-                PresentRequest presentRequest = new PresentRequest();
-                presentRequest.gebruikerId = userid;
-                new SendPacketTask().execute(presentRequest);
+                gebruiker = (Gebruiker)Gebruiker.deserializeJson(b.getString("gebruiker"), Gebruiker.class);
             }
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -60,10 +55,10 @@ public class MainActivity extends AppCompatActivity {
         aSwitch = (Switch) findViewById(R.id.presentSwitch);
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            public void onCheckedChanged(CompoundButton compoundButton, boolean aanwezig) {
                 // Elke keer als de waarde van de switch veranderd stuurt hij opnieuw een pakket met het gebruikers id.
                 PresentRequest presentRequest = new PresentRequest();
-                presentRequest.gebruikerId = userid;
+                presentRequest.aanwezig = aanwezig;
                 new SendPacketTask().execute(presentRequest);
             }
         });

@@ -1,4 +1,4 @@
-package com.feut.server.communication.gebruikers;
+package com.feut.server.communication.handlers;
 
 import com.feut.server.db.facades.AdresFacade;
 import com.feut.server.db.facades.GebruikerFacade;

@@ -52,9 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         if (response.success) {
             if (!FeutApplication.getCurrentActivity().equals(MainActivity.class)) {
                 Intent mainActivityIntent = new Intent(this, MainActivity.class);
-                mainActivityIntent.putExtra("email", response.gebruiker.email);
-                mainActivityIntent.putExtra("password", response.gebruiker.password);
-                mainActivityIntent.putExtra("userid", response.gebruiker.gebruikerId);
+                mainActivityIntent.putExtra("gebruiker", response.gebruiker.serializeJson());
                 startActivity(mainActivityIntent);
             }
         } else {
