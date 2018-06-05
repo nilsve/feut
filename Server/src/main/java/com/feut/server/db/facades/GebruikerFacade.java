@@ -26,17 +26,12 @@ public class GebruikerFacade extends Facade {
         }
     }
 
-    public static void toggleAanwezigheid(int gebruiker_id) throws Exception {
-        HuisGebruiker huisGebruiker = getHuisGebruiker(gebruiker_id);
-
-        int tempAanwezig = 0;
-        if (huisGebruiker.aanwezig == 0) tempAanwezig = 1;
-
-        Update("UPDATE huis_gebruiker SET aanwezig = ? WHERE gebruiker_id = ?", new String[] {Integer.toString(tempAanwezig), Integer.toString(gebruiker_id)});
+    public static void toggleAanwezigheid(int gebruikerId, int huisId, boolean aanwezig) throws Exception {
+        Update("UPDATE huis_gebruiker SET aanwezig = ? WHERE gebruiker_id = ? AND huis_id = ?", new String[] {aanwezig ? "1" : "0", Integer.toString(gebruikerId), Integer.toString(huisId)});
     }
-    public static HuisGebruiker getHuisGebruiker(int gebruiker_id) throws Exception {
-        return (HuisGebruiker)HuisGebruiker.Deserialize(querySingle("SELECT * FROM huis_gebruiker WHERE huis_id = ? LIMIT 1", new String[]{Integer.toString(gebruiker_id)}), HuisGebruiker.class);
 
+    public static HuisGebruiker getHuisGebruiker(int gebruikerId) throws Exception {
+        return (HuisGebruiker)HuisGebruiker.Deserialize(querySingle("SELECT * FROM huis_gebruiker WHERE gebruiker_id = ? LIMIT 1", new String[]{Integer.toString(gebruikerId)}), HuisGebruiker.class);
     }
 
 }

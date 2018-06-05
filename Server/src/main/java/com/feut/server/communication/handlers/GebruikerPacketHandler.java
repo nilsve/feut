@@ -1,5 +1,6 @@
-package com.feut.server.communication.gebruikers;
+package com.feut.server.communication.handlers;
 
+import com.feut.server.communication.GebruikerStateManager;
 import com.feut.server.db.facades.GebruikerFacade;
 import com.feut.shared.connection.Client;
 import com.feut.shared.connection.IReceivePacket;
@@ -7,11 +8,12 @@ import com.feut.shared.connection.packets.*;
 import com.feut.shared.models.Gebruiker;
 import com.feut.shared.models.HuisGebruiker;
 
-import java.sql.SQLException;
-
 public class GebruikerPacketHandler implements IReceivePacket {
+
+    GebruikerStateManager gebruikerStateManager = GebruikerStateManager.getInstance();
+
     @Override
-    public void onReceivePacket(Client client, Packet packet) throws SQLException {
+    public void onReceivePacket(Client client, Packet packet) throws Exception {
         switch (packet.getClass().getSimpleName()) {
             case "LoginRequest": {
                 LoginRequest request = (LoginRequest) packet;
@@ -23,6 +25,14 @@ public class GebruikerPacketHandler implements IReceivePacket {
                     loginResponse.success = true;
                     gebruiker.password = ""; // Het wachtwoord lijkt me geen goed idee om mee te sturen..
                     loginResponse.gebruiker = gebruiker;
+
+                    // In de ingelogde gebruiker lijst zetten
+                    gebruikerStateManager.handleGebruikerLogin(client, gebruiker);
+
+                    // Direct een huis selecteren. Dit kan evt ooit nog via een scherm op de app gaan
+                    HuisGebruiker huisGebruiker = GebruikerFacade.getHuisGebruiker(gebruiker.gebruikerId);
+                    gebruikerStateManager.handleGebruikerSelectHuis(client, huisGebruiker);
+
                 } else {
                     loginResponse.success = false;
                 }
@@ -61,28 +71,24 @@ public class GebruikerPacketHandler implements IReceivePacket {
             case "PresentRequest": {
                 // Pakket welke ontvangen wordt casten, en de nieuwe direct klaarzetten voor gebruik.
                 PresentRequest presentRequest = (PresentRequest) packet;
+
+                // We spreken de gebruikersfacade aan om vervolgens de functie toggleAanwezigheid te gebruiken.
+                // Deze functie heeft het userid nodig van de gebruiker, welke wordt vergaard tijdens inloggen.
+
+                Gebruiker gebruiker = gebruikerStateManager.getGebruiker(client);
+                HuisGebruiker huisGebruiker = gebruikerStateManager.getHuisGebruiker(client);
+
+                try {
+                    GebruikerFacade.toggleAanwezigheid(gebruiker.gebruikerId, huisGebruiker.huisId, presentRequest.aanwezig);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
+                }
+
+                // TODO: Broadcast naar iedereen?
                 PresentResponse presentResponse = new PresentResponse();
-
-                // We spreken de gebruikersfacade aan om vervolgens de functie toggleAanwezigheid te gebruiken. 
-                // Deze functie heeft het userid nodig van de gebruiker, welke wordt vergaard tijdens inloggen. 
-                try {
-                    GebruikerFacade.toggleAanwezigheid(presentRequest.gebruikerId);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    break;
-                }
-
-                // De gebruikersfacade heeft een functie welke een volledige Huisgebruiker teruggeeft
-                // TODO: Wellicht kijken of deze functie alleen de aanwezigheid teruggeeft, 
-                // Echter misschien is het handig om dat hele huisGebuiker object later in het project nog te gebruiken.
-                try {
-                    HuisGebruiker huisGebruiker = GebruikerFacade.getHuisGebruiker(presentRequest.gebruikerId);
-                    if (huisGebruiker.aanwezig == 1) presentResponse.aanwezig = true;
-                    else presentResponse.aanwezig = false;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    break;
-                }
+                presentResponse.aanwezig = presentRequest.aanwezig;
+                presentResponse.gebruikerId = gebruiker.gebruikerId;
                 client.sendPacket(presentResponse);
                 break;
             }

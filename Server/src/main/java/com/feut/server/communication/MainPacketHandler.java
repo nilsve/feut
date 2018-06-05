@@ -1,7 +1,7 @@
 package com.feut.server.communication;
 
-import com.feut.server.communication.gebruikers.GebruikerPacketHandler;
-import com.feut.server.communication.gebruikers.HuisPacketHandler;
+import com.feut.server.communication.handlers.GebruikerPacketHandler;
+import com.feut.server.communication.handlers.HuisPacketHandler;
 import com.feut.shared.connection.Client;
 import com.feut.shared.connection.IReceivePacket;
 import com.feut.shared.connection.Server;
@@ -17,7 +17,7 @@ public class MainPacketHandler implements IReceivePacket {
     HuisPacketHandler huisHandler = new HuisPacketHandler();
 
     @Override
-    public void onReceivePacket(Client client, Packet packet) throws SQLException {
+    public void onReceivePacket(Client client, Packet packet) throws Exception {
         switch (packet.getClass().getSimpleName()) {
             case "PresentRequest":
             case "CheckinPacket":

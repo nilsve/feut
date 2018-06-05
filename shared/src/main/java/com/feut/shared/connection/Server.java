@@ -2,6 +2,7 @@ package com.feut.shared.connection;
 
 import com.feut.shared.connection.packets.Packet;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -13,23 +14,28 @@ public class Server {
     List<Client> clientList = new ArrayList<Client>();
 
     IReceivePacket onReceivePacket;
+    IOnDisconnect onDisconnect;
 
-    public Server(int port, IReceivePacket onReceivePacket) throws IOException {
+    public Server(int port, IReceivePacket onReceivePacket, @Nullable IOnDisconnect onDisconnect) throws IOException {
         this.socket = new ServerSocket(port);
         this.onReceivePacket = onReceivePacket;
+        this.onDisconnect = onDisconnect;
     }
 
     public void Listen() throws IOException {
         while(true) {
-            Client client = new Client(socket.accept(), onReceivePacket, (Client _client) -> onDisconnect(_client));
+            Client client = new Client(socket.accept(), onReceivePacket, (Client _client) -> handleDisconnect(_client));
             new Thread(client).start();
             LogHelper.Log(client, "Connected");
             clientList.add(client);
         }
     }
 
-    void onDisconnect(Client client) {
+    void handleDisconnect(Client client) {
         clientList.remove(client);
+        if (this.onDisconnect != null) {
+            this.onDisconnect.onDisconnect(client);
+        }
     }
 
     public void Broadcast(Packet packet) {

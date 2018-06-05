@@ -48,4 +48,11 @@ public class Model {
         return result;
     }
 
+    public String serializeJson() {
+        return gson.toJson(this);
+    }
+
+    public static <M extends Model> Model deserializeJson(String json, Class<M> returnType) {
+        return (Model)gson.fromJson(json, returnType);
+    }
 }
