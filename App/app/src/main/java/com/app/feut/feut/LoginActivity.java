@@ -44,14 +44,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     IReceivePacket handleLoginResponse = (Client client, Packet packet) -> {
-
+        // Cast response zodat we variabelen kunnen gebruiken.
         LoginResponse response = (LoginResponse)packet;
-        String tempEmail = emailText.getText().toString();
 
-
+        // Als we een succesvolle combinatie hebben ingevoerd gaan we MainActivity Openen en geven we gegevens mee.
+        // We kunnen helaas geen custom Objects meesturen..
         if (response.success) {
             if (!FeutApplication.getCurrentActivity().equals(MainActivity.class)) {
                 Intent mainActivityIntent = new Intent(this, MainActivity.class);
+                mainActivityIntent.putExtra("gebruiker", response.gebruiker.serializeJson());
                 startActivity(mainActivityIntent);
             }
         } else {
@@ -65,6 +66,8 @@ public class LoginActivity extends AppCompatActivity {
 
         if (!FeutApplication.getCurrentActivity().equals(RegisterActivity.class)) {
             Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
+            registerIntent.putExtra("email", tempEmail);
+            registerIntent.putExtra("password", tempPassword);
             startActivity(registerIntent);
         }
     };

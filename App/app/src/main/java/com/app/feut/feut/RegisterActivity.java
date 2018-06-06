@@ -61,16 +61,17 @@ public class RegisterActivity extends AppCompatActivity {
         RegisterResponse response = (RegisterResponse)packet;
         if (response.success) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setMessage("Je nieuwe account is geregistreerd, wil je nu een adres registreren?")
+            builder.setMessage("Je nieuwe account is geregistreerd, wil je meteen een adres registreren?")
                     .setTitle("Account geregistreerd")
                     .setCancelable(false)
                     .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (!FeutApplication.getCurrentActivity().equals(NewAddressActivity.class)) {
-                                Intent newAddresIntent = new Intent(context, NewAddressActivity.class);
-                                newAddresIntent.putExtra("email", emailText.getText().toString()); // Misschien moet de RegisterRequest global en private worden?
-                                startActivity(newAddresIntent);
+                                Intent newAddressIntent = new Intent(context, NewAddressActivity.class);
+                                newAddressIntent.putExtra("email", emailText.getText().toString());
+                                newAddressIntent.putExtra("password", passwordText.getText().toString());
+                                startActivity(newAddressIntent);
                             }
 
                         }
@@ -88,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
             alertDialog.show();
 
         } else {
-            Toast.makeText(context, "Dit account kan niet worden aangemaakt", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Wij kennen al een account met dit emailadres", Toast.LENGTH_SHORT).show();
         }
     };
 

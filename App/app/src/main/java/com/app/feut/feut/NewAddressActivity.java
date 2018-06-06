@@ -22,14 +22,15 @@ import com.feut.shared.connection.packets.RegisterAddressResponse;
 
 public class NewAddressActivity extends AppCompatActivity {
     private Context context = this;
-    private TextView streetText, streetNumberText, additionText, zipCodeText, cityText;
-    private String email;
+    private TextView addressNameText, streetText, streetNumberText, additionText, zipCodeText, cityText;
+    private String email, password;
 
     @Override
     protected synchronized void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_address);
 
+        addressNameText = findViewById(R.id.addressNameText);
         streetText = findViewById(R.id.streetText);
         streetNumberText = findViewById(R.id.streetNumberText);
         additionText = findViewById(R.id.additionText);
@@ -63,19 +64,35 @@ public class NewAddressActivity extends AppCompatActivity {
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             } else {
-                Toast.makeText(context, "Dit adres kan niet worden aangemaakt", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Wij kennen al een adres met deze combinatie van gegevens", Toast.LENGTH_SHORT).show();
             }
     };
 
     View.OnClickListener handleRegisterAddressClick = (View view) -> {
+        // Vanuit vorig scherm email en wachtwoord mee voor registratie in adres.
+        try {
+            Bundle b = getIntent().getExtras();
+            if (b != null) {
+                email = (b.getString("email"));
+                password = (b.getString("password"));
+            }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+
+        String name = addressNameText.getText().toString();
         String street = streetText.getText().toString();
         String num = streetNumberText.getText().toString();
         String add = additionText.getText().toString();
         String zip = zipCodeText.getText().toString();
         String city = cityText.getText().toString();
+
+        // Eventuele errormessage
         String message = "";
 
-        if (street.equals("")) {
+        if (name.equals("")) {
+            message = "Er is geen naam voor het huis ingevoerd";
+        } else if (street.equals("")) {
             message = "Er is geen straatnaam ingevoerd";
         } else if (num.equals("")) {
             message = "Er is geen huisnummer ingevoerd";
@@ -88,6 +105,9 @@ public class NewAddressActivity extends AppCompatActivity {
         } else {
             RegisterAddressRequest request = new RegisterAddressRequest();
 
+            request.email = email;
+            request.password = password;
+            request.name = name;
             request.street = street;
             request.streetNumber = num;
             request.addition = add;
