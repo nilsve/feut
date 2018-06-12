@@ -6,4 +6,7 @@
     <string name="title_groceries">Boodschappen</string>
     <string name="greeting_main">Hallo</string>
     <string name="presency_toggle">Jouw aanwezigheid:</string>
+    <string name="login">Inloggen</string>
+    <string name="register_button">Registreren</string>
+    <string name="create_adress_text">Adres aanmaken</string>
 </resources>

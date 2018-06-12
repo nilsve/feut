@@ -17,6 +17,8 @@
         android:layout_marginTop="8dp"
         android:text="@string/title_settings"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -59,6 +61,7 @@
         android:layout_marginRight="50dp"
         android:layout_marginTop="8dp"
         android:text="Uitnodigen"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="8sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/inviteEmailText"
@@ -102,6 +105,7 @@
         android:layout_marginRight="50dp"
         android:layout_marginTop="8dp"
         android:text="Veranderen"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="8sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordTitleText" />
@@ -116,6 +120,7 @@
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:layout_marginStart="50dp"
+        android:background="@android:color/holo_green_light"
         android:text="Uitloggen"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -127,14 +132,18 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="45dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="50dp"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:layout_marginStart="50dp"
+        android:background="@android:color/holo_green_light"
         android:text="Uitschrijven bij Adres"
+        android:textColorLink="@android:color/holo_green_light"
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/signOutButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
