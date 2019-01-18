@@ -1,5 +1,7 @@
 # De Feut app!
 
+Dit is een project gemaakt voor Fontys 
+
 ### Alles werkend krijgen
 1. Shared mapje builden (check dat er een shared.jar artifact wordt gegenereerd)
 2. De database opzetten
